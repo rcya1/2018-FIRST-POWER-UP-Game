@@ -5,8 +5,13 @@ class Robot
   float angle, a_velocity, a_acceleration;
   color robotColor;
   
+  Rectangle rectangle; //Nonrotated
+  Area collisionBox;   //Rotated
+  
   float speed;
   float a_speed;
+  
+  float maxSpeed;
   
   Robot(float x, float y, float w, float h, float angle, color robotColor)
   {
@@ -21,17 +26,58 @@ class Robot
     this.speed = 0.75;
     this.a_speed = 0.5;
     
+    this.maxSpeed = 5.0;
+    
     this.w = w;
     this.h = h;
+    
+    this.rectangle = new Rectangle((int) position.x - width / 2, (int) position.y - height / 2, (int) w, (int) h);
     
     this.robotColor = robotColor;
   }
   
-  void update()
+  void update(ArrayList<Area> objects)
   {
+    updateCollisionBox();
+    
     //Calculate Forces
-    applyAngularForce(-0.1 * a_velocity); //Air Resistance
-    applyForce(PVector.mult(velocity, -0.1)); //Air Resistance
+    calculateAirResistance();
+    calculateCollisions(objects);
+    
+    updatePositions();
+  }
+  
+  void updateCollisionBox()
+  {
+    rectangle.setLocation((int) (position.x - w / 2), (int) (position.y - h / 2));
+    collisionBox = new Area(rectangle);
+    
+    AffineTransform transform = new AffineTransform();
+    transform.rotate(radians(angle), position.x, position.y);
+    
+    collisionBox.transform(transform);
+  }
+  
+  void calculateAirResistance()
+  {
+    applyAngularForce(-0.1 * a_velocity);
+    applyForce(PVector.mult(velocity, -0.1)); 
+  }
+  
+  void calculateCollisions(ArrayList<Area> objects)
+  {
+    for(Area area : objects)
+    {
+      if(intersects(area))
+      {
+        applyForce(PVector.mult(velocity, -2.5));
+      }
+    }
+  }
+  
+  void updatePositions()
+  {
+    if(velocity.magSq() > maxSpeed * maxSpeed) velocity.setMag(maxSpeed);
     
     //Apply all of the forces to the position
     this.velocity.add(acceleration);
@@ -59,6 +105,19 @@ class Robot
     a_acceleration += force;
   }
   
+  void draw()
+  {
+    pushMatrix();
+    
+    translate(position.x, position.y);
+    rotate(radians(angle));
+    
+    fill(this.robotColor);
+    rect(0, 0, w, h);
+    
+    popMatrix();
+  }
+  
   void input(HashSet<Character> keys)
   {
     if(keys.contains('d')) applyAngularForce(a_speed);
@@ -75,16 +134,8 @@ class Robot
     }
   }
   
-  void draw()
+  boolean intersects(Area other)
   {
-    pushMatrix();
-    
-    translate(position.x, position.y);
-    rotate(radians(angle));
-    
-    fill(this.robotColor);
-    rect(0, 0, w, h);
-    
-    popMatrix();
+    return collisionBox.intersects(other.getBounds()) && other.intersects(collisionBox.getBounds());
   }
 }

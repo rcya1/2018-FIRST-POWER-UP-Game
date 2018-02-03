@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -7,7 +8,7 @@ import java.util.HashSet;
 HashSet<Character> keysPressed;
 
 Robot testRobot;
-
+ArrayList<Cube> cubes;
 ArrayList<Area> objects;
 Area fenceHorizontal;
 Area fenceVertical;
@@ -19,7 +20,9 @@ void setup()
   
   keysPressed = new HashSet<Character>();
   
-  testRobot = new Robot(width / 2, height / 2, 100, 200, PI / 2, color(200));
+  testRobot = new Robot(width / 2, height / 2, 100, 200, 0, color(200));
+  cubes = new ArrayList<Cube>();
+  cubes.add(new Cube(width / 3, height / 3));
   
   objects = new ArrayList<Area>();
   
@@ -38,7 +41,12 @@ void draw()
   background(255);
   
   testRobot.input(keysPressed);
-  testRobot.update(objects);
+  testRobot.update(objects, cubes);
+  
+  for(Cube cube : cubes)
+  {
+    cube.update();
+  }
   
   for(Area area : objects)
   {
@@ -47,6 +55,11 @@ void draw()
   
   rectMode(CENTER);
   testRobot.draw();
+  
+  for(Cube cube : cubes)
+  {
+    cube.draw();
+  }
 }
 
 void drawArea(Area area)

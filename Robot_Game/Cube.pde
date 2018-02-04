@@ -6,8 +6,8 @@ class Cube
   Cube(float x, float y)
   {
     position = new PVector(x, y);
-    this.w = 36;
-    this.h = 36;
+    this.w = 18;
+    this.h = 18;
   }
   
   void update()

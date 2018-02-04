@@ -20,6 +20,8 @@ class Robot
   boolean intakeActive;
   boolean canIntake;
   
+  boolean strafeDrive;
+  
   Robot(float x, float y, float w, float h, float angle, color robotColor)
   {
     position = new PVector(x, y);
@@ -45,6 +47,8 @@ class Robot
     
     this.intakeActive = false;
     this.canIntake = true;
+    
+    this.strafeDrive = false;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes)
@@ -55,7 +59,7 @@ class Robot
     calculateAirResistance();
     
     updatePositions(objects, cubes);
-    if(intakeActive && this.cube == null) handleCollisions(cubes);
+    if(intakeActive && canIntake && this.cube == null) handleCollisions(cubes);
     if(intakeActive && canIntake && this.cube != null) ejectCube(cubes);
     
     if(this.cube != null) updateCubePosition();
@@ -170,6 +174,7 @@ class Robot
   {
     cubes.add(cube);
     this.cube = null;
+    this.canIntake = false;
   }
   
   void updateCubePosition()
@@ -201,7 +206,18 @@ class Robot
     popMatrix();
   }
   
-  void input(HashSet<Character> keys)
+  void input(HashSet<Character> keys, HashSet<Integer> keyCodes)
+  {
+    strafeDrive = keyCodes.contains(SHIFT);
+    
+    if(!strafeDrive) normalControl(keys, keyCodes);
+    else strafeControl(keys, keyCodes, false);
+    
+    intakeActive = keys.contains(' ');
+    if(!keys.contains(' ')) canIntake = true;
+  }
+  
+  void normalControl(HashSet<Character> keys, HashSet<Integer> keyCodes)
   {
     if(keys.contains('d')) applyAngularForce(a_speed);
     if(keys.contains('a')) applyAngularForce(-a_speed);
@@ -215,8 +231,31 @@ class Robot
       PVector moveForce = PVector.fromAngle(radians(angle - 90 + 180)).mult(speed);
       applyForce(moveForce);
     }
-    intakeActive = keys.contains(' ');
-    if(!keys.contains(' ')) canIntake = true;
+  }
+  
+  void strafeControl(HashSet<Character> keys, HashSet<Integer> keyCodes, boolean firstPerson)
+  {
+    float referenceAngle = firstPerson ? angle - 90 : -90;
+    if(keys.contains('d'))
+    {
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed);
+      applyForce(moveForce);
+    }
+    if(keys.contains('a'))
+    {
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed);
+      applyForce(moveForce);
+    }
+    if(keys.contains('w'))
+    {
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed);
+      applyForce(moveForce);
+    }
+    if(keys.contains('s'))
+    {
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed);
+      applyForce(moveForce);
+    }
   }
   
   boolean intersects(Area other)

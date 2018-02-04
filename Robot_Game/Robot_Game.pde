@@ -1,3 +1,7 @@
+import net.java.games.input.*;
+import org.gamecontrolplus.*;
+import org.gamecontrolplus.gui.*;
+
 import java.util.Iterator;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
@@ -6,6 +10,7 @@ import java.awt.Rectangle;
 import java.util.HashSet;
 
 HashSet<Character> keysPressed;
+HashSet<Integer> keyCodes;
 
 Robot testRobot;
 ArrayList<Cube> cubes;
@@ -19,8 +24,9 @@ void setup()
   size(1000, 600);
   
   keysPressed = new HashSet<Character>();
+  keyCodes = new HashSet<Integer>();
   
-  testRobot = new Robot(width / 2, height / 2, 100, 200, 0, color(200));
+  testRobot = new Robot(width / 2, height / 2, 50, 100, 0, color(200));
   cubes = new ArrayList<Cube>();
   cubes.add(new Cube(width / 3, height / 3));
   
@@ -40,7 +46,7 @@ void draw()
 {
   background(255);
   
-  testRobot.input(keysPressed);
+  testRobot.input(keysPressed, keyCodes);
   testRobot.update(objects, cubes);
   
   for(Cube cube : cubes)
@@ -85,10 +91,12 @@ void drawArea(Area area)
 
 void keyPressed()
 {
-  keysPressed.add(key);
+  keysPressed.add(Character.toLowerCase(key));
+  keyCodes.add(keyCode);
 }
 
 void keyReleased()
 {
-  if(keysPressed.contains(key)) keysPressed.remove(key);
+  keysPressed.remove(Character.toLowerCase(key));
+  keyCodes.remove(keyCode); 
 }

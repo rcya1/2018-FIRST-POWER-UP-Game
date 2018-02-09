@@ -12,7 +12,8 @@ import java.util.HashSet;
 HashSet<Character> keysPressed;
 HashSet<Integer> keyCodes;
 
-Robot testRobot;
+Robot player1;
+Robot player2;
 ArrayList<Cube> cubes;
 ArrayList<Area> objects;
 Area fenceHorizontal;
@@ -22,11 +23,14 @@ int fenceWidth;
 void setup()
 {
   size(1000, 600);
+  frameRate(45);
   
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
   
-  testRobot = new Robot(width / 2, height / 2, 50, 100, 0, color(200));
+  player1 = new Robot(width / 6, height / 2, 50, 100, 90, color(200), true, player2);
+  player2 = new Robot(width - width / 6, height / 2, 50, 100, 270, color(200), false, player1);
+  
   cubes = new ArrayList<Cube>();
   cubes.add(new Cube(width / 3, height / 3));
   
@@ -46,8 +50,10 @@ void draw()
 {
   background(255);
   
-  testRobot.input(keysPressed, keyCodes);
-  testRobot.update(objects, cubes);
+  player1.input(keysPressed, keyCodes);
+  player2.input(keysPressed, keyCodes);
+  player1.update(objects, cubes);
+  player2.update(objects, cubes);
   
   for(Cube cube : cubes)
   {
@@ -60,12 +66,15 @@ void draw()
   }
   
   rectMode(CENTER);
-  testRobot.draw();
+  player1.draw();
+  player2.draw();
   
   for(Cube cube : cubes)
   {
     cube.draw();
   }
+  
+  println(frameRate);
 }
 
 void drawArea(Area area)

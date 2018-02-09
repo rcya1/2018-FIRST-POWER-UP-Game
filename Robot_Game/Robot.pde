@@ -22,7 +22,11 @@ class Robot
   
   boolean strafeDrive;
   
-  Robot(float x, float y, float w, float h, float angle, color robotColor)
+  boolean wasd;
+  
+  Robot oppRobot;
+  
+  Robot(float x, float y, float w, float h, float angle, color robotColor, boolean wasd, Robot oppRobot)
   {
     position = new PVector(x, y);
     velocity = new PVector(0, 0);
@@ -49,6 +53,8 @@ class Robot
     this.canIntake = true;
     
     this.strafeDrive = false;
+    this.wasd = wasd;
+    this.oppRobot = oppRobot;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes)
@@ -93,7 +99,7 @@ class Robot
     {
       unified.add(area);
     }
-    int DIVISIONS = 150;
+    int DIVISIONS = 200;
     
     if(velocity.magSq() > maxSpeed * maxSpeed) velocity.setMag(maxSpeed);
     if(velocity.magSq() < 0.01) velocity.mult(0);
@@ -110,6 +116,14 @@ class Robot
       {
         this.position.sub(move);
         break;
+      }
+      
+      if(oppRobot != null)
+      {
+        if(intersects(oppRobot.collisionBox))
+        {
+          this.position.sub(move);
+        }
       }
       
       for(Cube cube : cubes)
@@ -132,6 +146,14 @@ class Robot
       {
         this.angle -= moveAngle;
         break;
+      }
+      
+      if(oppRobot != null)
+      {
+        if(intersects(oppRobot.collisionBox))
+        {
+          this.position.sub(move);
+        }
       }
       
       for(Cube cube : cubes)
@@ -177,9 +199,9 @@ class Robot
     this.canIntake = false;
   }
   
-  void updateCubePosition()
+  void updateCubePosition() //TODO Check if it is colliding with any other cubes. If it is, disable ejecting cubes
   {
-    this.cube.position = PVector.add(position, PVector.fromAngle(radians(angle - 90)).mult(h * 2 / 3.0));
+    this.cube.position = PVector.add(position, PVector.fromAngle(radians(angle - 90)).mult(h * 3 / 4.0));
   }
   
   void applyForce(PVector force)
@@ -208,25 +230,25 @@ class Robot
   
   void input(HashSet<Character> keys, HashSet<Integer> keyCodes)
   {
-    strafeDrive = keyCodes.contains(SHIFT);
+    strafeDrive = (keyCodes.contains(SHIFT) && wasd) || ((keys.contains('/') || keys.contains('?')) && !wasd);
     
     if(!strafeDrive) normalControl(keys, keyCodes);
     else strafeControl(keys, keyCodes, false);
     
-    intakeActive = keys.contains(' ');
-    if(!keys.contains(' ')) canIntake = true;
+    intakeActive = (keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd);
+    if(!((keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd))) canIntake = true;
   }
   
   void normalControl(HashSet<Character> keys, HashSet<Integer> keyCodes)
   {
-    if(keys.contains('d')) applyAngularForce(a_speed);
-    if(keys.contains('a')) applyAngularForce(-a_speed);
-    if(keys.contains('w'))
+    if((keys.contains('d') && wasd) || (keyCodes.contains(RIGHT) && !wasd)) applyAngularForce(a_speed);
+    if((keys.contains('a') && wasd) || (keyCodes.contains(LEFT) && !wasd)) applyAngularForce(-a_speed);
+    if((keys.contains('w') && wasd) || (keyCodes.contains(UP) && !wasd))
     {
       PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult(speed);
       applyForce(moveForce);
     }
-    if(keys.contains('s'))
+    if((keys.contains('s') && wasd) || (keyCodes.contains(DOWN) && !wasd))
     {
       PVector moveForce = PVector.fromAngle(radians(angle - 90 + 180)).mult(speed);
       applyForce(moveForce);
@@ -236,24 +258,24 @@ class Robot
   void strafeControl(HashSet<Character> keys, HashSet<Integer> keyCodes, boolean firstPerson)
   {
     float referenceAngle = firstPerson ? angle - 90 : -90;
-    if(keys.contains('d'))
+    if((keys.contains('d') && wasd) || (keyCodes.contains(RIGHT) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed / 2.0);
       applyForce(moveForce);
     }
-    if(keys.contains('a'))
+    if((keys.contains('a') && wasd) || (keyCodes.contains(LEFT) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed / 2.0);
       applyForce(moveForce);
     }
-    if(keys.contains('w'))
+    if((keys.contains('w') && wasd) || (keyCodes.contains(UP) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed / 2.0);
       applyForce(moveForce);
     }
-    if(keys.contains('s'))
+    if((keys.contains('s') && wasd) || (keyCodes.contains(DOWN) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed / 2.0);
       applyForce(moveForce);
     }
   }

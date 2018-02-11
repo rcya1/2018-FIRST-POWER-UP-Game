@@ -9,6 +9,8 @@ import java.awt.geom.Area;
 import java.awt.Rectangle;
 import java.util.HashSet;
 
+static final int FPS = 45;
+
 HashSet<Character> keysPressed;
 HashSet<Integer> keyCodes;
 
@@ -20,10 +22,14 @@ Area fenceHorizontal;
 Area fenceVertical;
 int fenceWidth;
 
+Scale scale;
+
+int[] score;
+
 void setup()
 {
   size(1000, 600);
-  frameRate(45);
+  frameRate(FPS);
   
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
@@ -47,6 +53,10 @@ void setup()
   
   objects.add(fenceHorizontal);
   objects.add(fenceVertical);
+  
+  scale = new Scale(width / 2, height / 2, 80, 360);
+  
+  score = new int[] {0, 0};
 }
 
 void draw()
@@ -55,13 +65,15 @@ void draw()
   
   player1.input(keysPressed, keyCodes);
   player2.input(keysPressed, keyCodes);
-  player1.update(objects, cubes);
-  player2.update(objects, cubes);
+  player1.update(objects, cubes, scale);
+  player2.update(objects, cubes, scale);
   
   for(Cube cube : cubes)
   {
     cube.update();
   }
+  
+  scale.update(cubes);
   
   for(Area area : objects)
   {
@@ -69,13 +81,21 @@ void draw()
   }
   
   rectMode(CENTER);
+  
   player1.draw();
   player2.draw();
+  
+  scale.draw();
   
   for(Cube cube : cubes)
   {
     cube.draw();
   }
+  
+  textSize(40);
+  fill(0);
+  text(score[0], width / 3, height / 10);
+  text(score[1], width * 2.0 / 3, height / 10);
   
   println(frameRate);
 }

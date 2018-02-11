@@ -3,7 +3,5 @@ Side Game for the 2018 FIRST Robotics Competition.
 
 Plans:
 XBox Controller Support
-Adding in Scales/Switches
-Adding in 2nd player
+Adding in Switches
 Adding in Timer
-Adding in Scoring

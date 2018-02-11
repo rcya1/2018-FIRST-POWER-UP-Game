@@ -1,6 +1,17 @@
-import net.java.games.input.*;
-import org.gamecontrolplus.*;
-import org.gamecontrolplus.gui.*;
+import com.studiohartman.jamepad.*;
+import com.studiohartman.jamepad.tester.*;
+import com.badlogic.gdx.jnigen.*;
+import com.badlogic.gdx.jnigen.parsing.*;
+import com.badlogic.gdx.jnigen.test.*;
+import com.github.javaparser.*;
+import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.comments.*;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.internal.*;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.*;
+import com.github.javaparser.ast.visitor.*;
 
 import java.util.Iterator;
 import java.awt.geom.PathIterator;

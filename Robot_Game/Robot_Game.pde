@@ -28,8 +28,11 @@ void setup()
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
   
-  player1 = new Robot(width / 6, height / 2, 50, 100, 90, color(200), true, player2);
-  player2 = new Robot(width - width / 6, height / 2, 50, 100, 270, color(200), false, player1);
+  player1 = new Robot(width / 6, height / 2, 50, 100, 90, color(200), true);
+  player2 = new Robot(width - width / 6, height / 2, 50, 100, 270, color(200), false);
+  
+  player1.setOppRobot(player2);
+  player2.setOppRobot(player1);
   
   cubes = new ArrayList<Cube>();
   cubes.add(new Cube(width / 3, height / 3));

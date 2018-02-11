@@ -26,7 +26,7 @@ class Robot
   
   Robot oppRobot;
   
-  Robot(float x, float y, float w, float h, float angle, color robotColor, boolean wasd, Robot oppRobot)
+  Robot(float x, float y, float w, float h, float angle, color robotColor, boolean wasd)
   {
     position = new PVector(x, y);
     velocity = new PVector(0, 0);
@@ -54,7 +54,6 @@ class Robot
     
     this.strafeDrive = false;
     this.wasd = wasd;
-    this.oppRobot = oppRobot;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes)
@@ -152,7 +151,7 @@ class Robot
       {
         if(intersects(oppRobot.collisionBox))
         {
-          this.position.sub(move);
+          this.angle -= moveAngle;
         }
       }
       
@@ -282,11 +281,18 @@ class Robot
   
   boolean intersects(Area other)
   {
+    if(other == null) return false;
     return collisionBox.intersects(other.getBounds()) && other.intersects(collisionBox.getBounds());
   }
   
   boolean intersectsFront(Area other)
   {
+    if(other == null) return false;
     return frontCollisionBox.intersects(other.getBounds()) && other.intersects(frontCollisionBox.getBounds());
+  }
+  
+  void setOppRobot(Robot robot)
+  {
+    this.oppRobot = robot;
   }
 }

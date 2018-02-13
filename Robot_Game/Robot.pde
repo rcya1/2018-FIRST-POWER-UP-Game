@@ -36,10 +36,10 @@ class Robot
     a_velocity = 0;
     a_acceleration = 0;
     
-    this.speed = 0.75;
+    this.speed = width / 1000.0;
     this.a_speed = 0.5;
     
-    this.maxSpeed = 5.0;
+    this.maxSpeed = width / 200.0;
     
     this.w = w;
     this.h = h;
@@ -279,22 +279,22 @@ class Robot
     float referenceAngle = firstPerson ? angle - 90 : -90;
     if((keys.contains('d') && wasd) || (keyCodes.contains(RIGHT) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed / 2.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed / 3.0);
       applyForce(moveForce);
     }
     if((keys.contains('a') && wasd) || (keyCodes.contains(LEFT) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed / 2.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed / 3.0);
       applyForce(moveForce);
     }
     if((keys.contains('w') && wasd) || (keyCodes.contains(UP) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed / 2.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed / 3.0);
       applyForce(moveForce);
     }
     if((keys.contains('s') && wasd) || (keyCodes.contains(DOWN) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed / 2.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed / 3.0);
       applyForce(moveForce);
     }
   }

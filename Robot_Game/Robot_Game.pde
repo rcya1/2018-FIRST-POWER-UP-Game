@@ -40,13 +40,14 @@ int[] score;
 void setup()
 {
   size(1000, 600);
+  //fullScreen();
   frameRate(FPS);
   
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
   
-  player1 = new Robot(width / 6, height / 2, 50, 100, 90, color(200), true);
-  player2 = new Robot(width - width / 6, height / 2, 50, 100, 270, color(200), false);
+  player1 = new Robot(width / 6, height / 2, width / 20, height / 6, 90, color(200), true);
+  player2 = new Robot(width - width / 6, height / 2, width / 20, height / 6, 270, color(200), false);
   
   player1.setOppRobot(player2);
   player2.setOppRobot(player1);
@@ -56,7 +57,7 @@ void setup()
   
   objects = new ArrayList<Area>();
   
-  fenceWidth = 20;
+  fenceWidth = width / 50;
   fenceHorizontal = new Area(new Rectangle(0, 0, width, fenceWidth));
   fenceHorizontal.add(new Area(new Rectangle(0, 0, fenceWidth, height)));
   fenceVertical = new Area(new Rectangle(width - fenceWidth, 0, fenceWidth, height));
@@ -65,7 +66,7 @@ void setup()
   objects.add(fenceHorizontal);
   objects.add(fenceVertical);
   
-  scale = new Scale(width / 2, height / 2, 80, 360);
+  scale = new Scale(width / 2, height / 2, width / 12.5, height / 2);
   
   score = new int[] {0, 0};
 }
@@ -103,12 +104,10 @@ void draw()
     cube.draw();
   }
   
-  textSize(40);
+  textSize(height / 15);
   fill(0);
   text(score[0], width / 3, height / 10);
   text(score[1], width * 2.0 / 3, height / 10);
-  
-  println(frameRate);
 }
 
 void drawArea(Area area)

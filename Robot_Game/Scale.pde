@@ -59,6 +59,6 @@ class Scale
   
   Area getBottomArea()
   {
-      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y + h / 2), (int) w, (int) w));
+      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y + h / 2 - w), (int) w, (int) w));
   }
 }

@@ -1,13 +1,16 @@
-class Scale
+class Balance
 {
   PVector position;
   float w, h;
+  boolean isScale;
   
-  Scale(float x, float y, float w, float h)
+  Balance(float x, float y, float w, float h, boolean isScale)
   {
     position = new PVector(x, y);
     this.w = w;
     this.h = h;
+    
+    this.isScale = isScale;
   }
   
   void update(ArrayList<Cube> cubes)
@@ -49,7 +52,14 @@ class Scale
   
   Area getArea()
   {
-    return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2 + w), (int) w, (int) (h - w * 2)));
+    if(isScale)
+    {
+      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2 + w), (int) w, (int) (h - w * 2)));
+    }
+    else
+    {
+      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2), (int) w, (int) h));
+    }
   }
   
   Area getTopArea()

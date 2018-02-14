@@ -3,7 +3,7 @@ class Robot
   PVector position, velocity, acceleration;
   float w, h;
   float angle, a_velocity, a_acceleration;
-  color robotColor;
+  color robotColor, intakeColor;
   
   Rectangle rectangle;    //Nonrotated
   Rectangle frontRectangle;
@@ -26,7 +26,8 @@ class Robot
   
   Robot oppRobot;
   
-  Robot(float x, float y, float w, float h, float angle, color robotColor, boolean wasd)
+  //TODO Optimize this
+  Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {
     position = new PVector(x, y);
     velocity = new PVector(0, 0);
@@ -47,6 +48,7 @@ class Robot
     this.rectangle = new Rectangle((int) position.x - width / 2, (int) position.y - height / 2, (int) w, (int) h);
     
     this.robotColor = robotColor;
+    this.intakeColor = intakeColor;
     this.cube = null;
     
     this.intakeActive = false;
@@ -56,16 +58,16 @@ class Robot
     this.wasd = wasd;
   }
   
-  void update(ArrayList<Area> objects, ArrayList<Cube> cubes, Scale scale)
+  void update(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
     updateCollisionBox();
     
     //Calculate Forces
     calculateAirResistance();
     
-    updatePositions(objects, cubes, scale);
-    if(intakeActive && canIntake && this.cube == null) handleCollisions(cubes);
-    if(intakeActive && canIntake && this.cube != null) ejectCube(objects, cubes, scale);
+    updatePositions(objects, cubes, balances);
+    if(intakeActive && canIntake && this.cube == null) checkIntake(cubes, balances);
+    if(intakeActive && canIntake && this.cube != null) ejectCube(objects, cubes, balances);
     
     if(this.cube != null) updateCubePosition();
   }
@@ -75,7 +77,7 @@ class Robot
     rectangle.setLocation((int) (position.x - w / 2), (int) (position.y - h / 2));
     collisionBox = new Area(rectangle);
     
-    frontRectangle = new Rectangle((int) (position.x - w / 4), (int) (position.y - h / 2 - 1), (int) w / 2, (int) h / 2);
+    frontRectangle = new Rectangle((int) (position.x - w / 4), (int) (position.y - h / 2.0 - 1), (int) w / 2, (int) h / 4);
     frontCollisionBox = new Area(frontRectangle);
     
     AffineTransform transform = new AffineTransform();
@@ -91,7 +93,7 @@ class Robot
     applyForce(PVector.mult(velocity, -0.1));
   }
   
-  void updatePositions(ArrayList<Area> objects, ArrayList<Cube> cubes, Scale scale)
+  void updatePositions(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
     Area unified = new Area();
     for(Area area : objects)
@@ -111,7 +113,7 @@ class Robot
     {
       this.position.add(move);
       updateCollisionBox();
-      if(intersects(unified) || intersects(scale.getArea()))
+      if(intersects(unified))
       {
         this.position.sub(move);
         break;
@@ -125,14 +127,36 @@ class Robot
         }
       }
       
+      for(Balance balance : balances)
+      {
+        if(intersects(balance.getArea()))
+        {
+          this.position.sub(move);
+          break;
+        }
+      }
+      
       for(Cube cube : cubes)
       {
         if(!cube.used)
         {
-          if(intersects(cube.getArea()))
+          boolean flag = false;
+          for(Balance balance : balances)
           {
-            this.position.sub(move);
-            break;
+            if(cube.intersects(balance.getTopArea()) || cube.intersects(balance.getBottomArea()))
+            {
+              flag = true;
+              break;
+            }
+          }
+          
+          if(!flag)
+          {
+            if(intersects(cube.getArea()))
+            {
+              this.position.sub(move);
+              break;
+            }
           }
         }
       }
@@ -144,7 +168,7 @@ class Robot
     {
       this.angle += moveAngle;
       updateCollisionBox();
-      if(intersects(unified) || intersects(scale.getArea()))
+      if(intersects(unified))
       {
         this.angle -= moveAngle;
         break;
@@ -158,14 +182,36 @@ class Robot
         }
       }
       
+      for(Balance balance : balances)
+      {
+        if(intersects(balance.getArea()))
+        {
+          this.angle -= moveAngle;
+          break;
+        }
+      }
+      
       for(Cube cube : cubes)
       {
         if(!cube.used)
         {
-          if(intersects(cube.getArea()))
+          boolean flag = false;
+          for(Balance balance : balances)
           {
-            this.angle -= moveAngle;
-            break;
+            if(cube.intersects(balance.getTopArea()) || cube.intersects(balance.getBottomArea()))
+            {
+              flag = true;
+              break;
+            }
+          }
+          
+          if(!flag)
+          {
+            if(intersects(cube.getArea()))
+            {
+              this.angle -= moveAngle;
+              break;
+            }
           }
         }
       }
@@ -180,7 +226,7 @@ class Robot
     this.a_acceleration = 0;
   }
   
-  void handleCollisions(ArrayList<Cube> cubes)
+  void checkIntake(ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
     Iterator<Cube> iterator = cubes.iterator();
     while(iterator.hasNext())
@@ -190,35 +236,52 @@ class Robot
       {
         if(intersectsFront(cube.getArea()))
         {
-          this.cube = cube;
-          iterator.remove();
-          intakeActive = false;
-          canIntake = false;
-          break;
+          boolean flag = false;
+          for(Balance balance : balances)
+          {
+            if(cube.intersects(balance.getTopArea()) || cube.intersects(balance.getBottomArea()))
+            {
+              flag = true;
+              break;
+            }
+          }
+          
+          if(!flag)
+          {
+            this.cube = cube;
+            iterator.remove();
+            intakeActive = false;
+            canIntake = false;
+            break;
+          }
         }
       }
     }
   }
   
-  void ejectCube(ArrayList<Area> areas, ArrayList<Cube> cubes, Scale scale)
+  void ejectCube(ArrayList<Area> areas, ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
     Area unified = new Area();
     for(Area area : areas)
     {
       unified.add(area);
     }
-    if(!this.cube.intersects(unified, cubes, oppRobot, scale))
+    if(!this.cube.intersects(unified, cubes, oppRobot, balances))
     {
-      if(this.cube.intersects(scale.getBottomArea()) || this.cube.intersects(scale.getTopArea())) this.cube.used = true;
-      else this.cube.used = false;
-      
-      cubes.add(cube);
-      this.cube = null;
-      this.canIntake = false;
+      for(Balance balance : balances)
+      {
+        if(this.cube.intersects(balance.getBottomArea()) || this.cube.intersects(balance.getTopArea())) this.cube.used = true;
+        else this.cube.used = false;
+        
+        cubes.add(cube);
+        this.cube = null;
+        this.canIntake = false;
+        break;
+      }
     }
   }
   
-  void updateCubePosition() //TODO Check if it is colliding with any other cubes. If it is, disable ejecting cubes
+  void updateCubePosition()
   {
     this.cube.position = PVector.add(position, PVector.fromAngle(radians(angle - 90)).mult(h * 3 / 4.0));
   }
@@ -245,6 +308,8 @@ class Robot
     rect(0, 0, w, h);
     
     popMatrix();
+    
+    drawArea(frontCollisionBox, intakeColor);
   }
   
   void input(HashSet<Character> keys, HashSet<Integer> keyCodes)

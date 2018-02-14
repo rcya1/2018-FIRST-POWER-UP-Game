@@ -16,7 +16,6 @@ class Cube
     
   }
   
-  
   void draw()
   {
     rectMode(CENTER);
@@ -36,12 +35,19 @@ class Cube
     return collisionBox.intersects(other.getBounds()) && other.intersects(collisionBox.getBounds());
   }
   
-  boolean intersects(Area area, ArrayList<Cube> cubes, Robot robot, Scale scale)
+  boolean intersects(Area area, ArrayList<Cube> cubes, Robot robot, ArrayList<Balance> balances)
   {
-    if(intersects(area) || intersects(scale.getArea()) || intersects(robot.collisionBox)) return true;
+    if(intersects(area) || intersects(robot.collisionBox)) return true;
     for(Cube cube : cubes)
     {
       if(intersects(cube.getArea())) return true;
+    }
+    for(Balance balance : balances)
+    {
+      if(intersects(balance.getArea()))
+      {
+        if(!intersects(balance.getTopArea()) && !intersects(balance.getBottomArea())) return true;
+      }
     }
     return false;
   }

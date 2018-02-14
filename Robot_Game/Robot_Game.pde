@@ -33,7 +33,7 @@ Area fenceHorizontal;
 Area fenceVertical;
 int fenceWidth;
 
-Scale scale;
+ArrayList<Balance> balances;
 
 int[] score;
 
@@ -46,14 +46,15 @@ void setup()
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
   
-  player1 = new Robot(width / 6, height / 2, width / 20, height / 6, 90, color(200), true);
-  player2 = new Robot(width - width / 6, height / 2, width / 20, height / 6, 270, color(200), false);
+  player1 = new Robot(width / 6, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
+  player2 = new Robot(width - width / 6, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
   
   player1.setOppRobot(player2);
   player2.setOppRobot(player1);
   
   cubes = new ArrayList<Cube>();
   cubes.add(new Cube(width / 3, height / 3));
+  cubes.add(new Cube(width / 3, height / 3 + 10));
   
   objects = new ArrayList<Area>();
   
@@ -66,7 +67,10 @@ void setup()
   objects.add(fenceHorizontal);
   objects.add(fenceVertical);
   
-  scale = new Scale(width / 2, height / 2, width / 12.5, height / 2);
+  balances = new ArrayList<Balance>();
+  balances.add(new Balance(width / 2, height / 2, width / 12.5, height / 2, true)); //Scale
+  balances.add(new Balance(width / 4, height / 2, width / 15, height / 3, false)); //Left Switch
+  balances.add(new Balance(width * 3.0 / 4, height / 2, width / 15, height / 3, false)); //Right Switch
   
   score = new int[] {0, 0};
 }
@@ -77,19 +81,22 @@ void draw()
   
   player1.input(keysPressed, keyCodes);
   player2.input(keysPressed, keyCodes);
-  player1.update(objects, cubes, scale);
-  player2.update(objects, cubes, scale);
+  player1.update(objects, cubes, balances);
+  player2.update(objects, cubes, balances);
   
   for(Cube cube : cubes)
   {
     cube.update();
   }
   
-  scale.update(cubes);
+  for(Balance balance : balances)
+  {
+    balance.update(cubes);
+  }
   
   for(Area area : objects)
   {
-    drawArea(area);
+    drawArea(area, color(120));
   }
   
   rectMode(CENTER);
@@ -97,7 +104,10 @@ void draw()
   player1.draw();
   player2.draw();
   
-  scale.draw();
+  for(Balance balance : balances)
+  {
+    balance.draw();
+  }
   
   for(Cube cube : cubes)
   {
@@ -108,11 +118,13 @@ void draw()
   fill(0);
   text(score[0], width / 3, height / 10);
   text(score[1], width * 2.0 / 3, height / 10);
+  
+  println(frameRate);
 }
 
-void drawArea(Area area)
+void drawArea(Area area, color fillColor)
 {
-  fill(120);
+  fill(fillColor);
   PathIterator iterator = area.getPathIterator(null);
   while(!iterator.isDone())
   {

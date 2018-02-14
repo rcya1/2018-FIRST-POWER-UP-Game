@@ -4,6 +4,4 @@ Uses Jamepad, https://github.com/williamahartman/Jamepad, for controller support
 
 
 Plans:
-XBox Controller Support
-Adding in Switches
-Adding in Timer
+XBox Controller Support, Adding in Timer, Adding Climbing, Adding Random Switches/Scale

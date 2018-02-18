@@ -1,3 +1,4 @@
+import java.util.Random;
 import com.studiohartman.jamepad.*;
 import com.studiohartman.jamepad.tester.*;
 import com.badlogic.gdx.jnigen.*;
@@ -46,15 +47,15 @@ void setup()
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
   
-  player1 = new Robot(width / 6, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
-  player2 = new Robot(width - width / 6, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
+  player1 = new Robot(width / 8, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
+  player2 = new Robot(width - width / 8, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
   
   player1.setOppRobot(player2);
   player2.setOppRobot(player1);
   
   cubes = new ArrayList<Cube>();
   cubes.add(new Cube(width / 3, height / 3));
-  cubes.add(new Cube(width / 3, height / 3 + 10));
+  cubes.add(new Cube(width / 3, height / 3 + 60));
   
   objects = new ArrayList<Area>();
   
@@ -68,9 +69,9 @@ void setup()
   objects.add(fenceVertical);
   
   balances = new ArrayList<Balance>();
-  balances.add(new Balance(width / 2, height / 2, width / 12.5, height / 2, true)); //Scale
-  balances.add(new Balance(width / 4, height / 2, width / 15, height / 3, false)); //Left Switch
-  balances.add(new Balance(width * 3.0 / 4, height / 2, width / 15, height / 3, false)); //Right Switch
+  balances.add(new Balance(width / 2, height / 2, width / 12.5, height / 2, true, Math.random() < 0.5, false)); //Scale
+  balances.add(new Balance(width / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, true)); //Left Switch
+  balances.add(new Balance(width * 3.0 / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, false)); //Right Switch
   
   score = new int[] {0, 0};
 }

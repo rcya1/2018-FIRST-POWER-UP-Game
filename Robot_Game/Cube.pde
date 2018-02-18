@@ -2,13 +2,19 @@ class Cube
 {
   PVector position;
   float w, h;
-  boolean used;
+  boolean counted;
+  
+  float checkDistance;
   
   Cube(float x, float y)
   {
     position = new PVector(x, y);
     this.w = width / 55;
     this.h = width / 55;
+    
+    counted = false;
+    
+    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2;
   }
   
   void update()
@@ -40,13 +46,19 @@ class Cube
     if(intersects(area) || intersects(robot.collisionBox)) return true;
     for(Cube cube : cubes)
     {
-      if(intersects(cube.getArea())) return true;
+      if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+      {
+        if(intersects(cube.getArea())) return true;
+      }
     }
     for(Balance balance : balances)
     {
-      if(intersects(balance.getArea()))
+      if(PVector.sub(this.position, balance.position).magSq() <= this.checkDistance)
       {
-        if(!intersects(balance.getTopArea()) && !intersects(balance.getBottomArea())) return true;
+        if(intersects(balance.getArea()))
+        {
+          if(!intersects(balance.getTopArea()) && !intersects(balance.getBottomArea())) return true;
+        }
       }
     }
     return false;

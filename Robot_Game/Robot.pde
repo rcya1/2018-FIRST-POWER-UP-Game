@@ -26,6 +26,8 @@ class Robot
   
   Robot oppRobot;
   
+  float checkDistance;
+  
   //TODO Optimize this
   Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {
@@ -56,6 +58,8 @@ class Robot
     
     this.strafeDrive = false;
     this.wasd = wasd;
+    
+    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.5;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
@@ -66,7 +70,7 @@ class Robot
     calculateAirResistance();
     
     updatePositions(objects, cubes, balances);
-    if(intakeActive && canIntake && this.cube == null) checkIntake(cubes, balances);
+    if(intakeActive && canIntake && this.cube == null) checkIntake(cubes);
     if(intakeActive && canIntake && this.cube != null) ejectCube(objects, cubes, balances);
     
     if(this.cube != null) updateCubePosition();
@@ -121,36 +125,32 @@ class Robot
       
       if(oppRobot != null)
       {
-        if(intersects(oppRobot.collisionBox))
+        if(PVector.sub(this.position, oppRobot.position).magSq() <= this.checkDistance)
         {
-          this.position.sub(move);
+          if(intersects(oppRobot.collisionBox))
+          {
+            this.position.sub(move);
+          }
         }
       }
       
       for(Balance balance : balances)
       {
-        if(intersects(balance.getArea()))
+        if(PVector.sub(this.position, balance.position).magSq() <= this.checkDistance)
         {
-          this.position.sub(move);
-          break;
+          if(intersects(balance.getArea()))
+          {
+            this.position.sub(move);
+            break;
+          }
         }
       }
       
       for(Cube cube : cubes)
       {
-        if(!cube.used)
+        if(!cube.counted)
         {
-          boolean flag = false;
-          for(Balance balance : balances)
-          {
-            if(cube.intersects(balance.getTopArea()) || cube.intersects(balance.getBottomArea()))
-            {
-              flag = true;
-              break;
-            }
-          }
-          
-          if(!flag)
+          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
           {
             if(intersects(cube.getArea()))
             {
@@ -176,36 +176,32 @@ class Robot
       
       if(oppRobot != null)
       {
-        if(intersects(oppRobot.collisionBox))
+        if(PVector.sub(this.position, oppRobot.position).magSq() <= this.checkDistance)
         {
-          this.angle -= moveAngle;
+          if(intersects(oppRobot.collisionBox))
+          {
+            this.angle -= moveAngle;
+          }
         }
       }
       
       for(Balance balance : balances)
       {
-        if(intersects(balance.getArea()))
+        if(PVector.sub(this.position, balance.position).magSq() <= this.checkDistance)
         {
-          this.angle -= moveAngle;
-          break;
+          if(intersects(balance.getArea()))
+          {
+            this.angle -= moveAngle;
+            break;
+          }
         }
       }
       
       for(Cube cube : cubes)
       {
-        if(!cube.used)
+        if(!cube.counted)
         {
-          boolean flag = false;
-          for(Balance balance : balances)
-          {
-            if(cube.intersects(balance.getTopArea()) || cube.intersects(balance.getBottomArea()))
-            {
-              flag = true;
-              break;
-            }
-          }
-          
-          if(!flag)
+          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
           {
             if(intersects(cube.getArea()))
             {
@@ -226,27 +222,17 @@ class Robot
     this.a_acceleration = 0;
   }
   
-  void checkIntake(ArrayList<Cube> cubes, ArrayList<Balance> balances)
+  void checkIntake(ArrayList<Cube> cubes)
   {
     Iterator<Cube> iterator = cubes.iterator();
     while(iterator.hasNext())
     {
       Cube cube = (Cube) iterator.next();
-      if(!cube.used)
+      if(!cube.counted)
       {
-        if(intersectsFront(cube.getArea()))
+        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
         {
-          boolean flag = false;
-          for(Balance balance : balances)
-          {
-            if(cube.intersects(balance.getTopArea()) || cube.intersects(balance.getBottomArea()))
-            {
-              flag = true;
-              break;
-            }
-          }
-          
-          if(!flag)
+          if(intersectsFront(cube.getArea()))
           {
             this.cube = cube;
             iterator.remove();
@@ -268,16 +254,9 @@ class Robot
     }
     if(!this.cube.intersects(unified, cubes, oppRobot, balances))
     {
-      for(Balance balance : balances)
-      {
-        if(this.cube.intersects(balance.getBottomArea()) || this.cube.intersects(balance.getTopArea())) this.cube.used = true;
-        else this.cube.used = false;
-        
-        cubes.add(cube);
-        this.cube = null;
-        this.canIntake = false;
-        break;
-      }
+      cubes.add(cube);
+      this.cube = null;
+      this.canIntake = false;
     }
   }
   
@@ -344,22 +323,22 @@ class Robot
     float referenceAngle = firstPerson ? angle - 90 : -90;
     if((keys.contains('d') && wasd) || (keyCodes.contains(RIGHT) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed / 3.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 90)).mult(speed / 4.0);
       applyForce(moveForce);
     }
     if((keys.contains('a') && wasd) || (keyCodes.contains(LEFT) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed / 3.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle - 90)).mult(speed / 4.0);
       applyForce(moveForce);
     }
     if((keys.contains('w') && wasd) || (keyCodes.contains(UP) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed / 3.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle)).mult(speed / 4.0);
       applyForce(moveForce);
     }
     if((keys.contains('s') && wasd) || (keyCodes.contains(DOWN) && !wasd))
     {
-      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed / 3.0);
+      PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed / 4.0);
       applyForce(moveForce);
     }
   }

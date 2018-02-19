@@ -21,7 +21,7 @@ import java.awt.geom.Area;
 import java.awt.Rectangle;
 import java.util.HashSet;
 
-static final int FPS = 45;
+static final int FPS = 60;
 
 HashSet<Character> keysPressed;
 HashSet<Integer> keyCodes;
@@ -38,6 +38,8 @@ ArrayList<Balance> balances;
 
 int[] score;
 
+ControllerManager controllers;
+
 void setup()
 {
   size(1000, 600);
@@ -46,6 +48,9 @@ void setup()
   
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
+  
+  controllers = new ControllerManager();
+  controllers.initSDLGamepad();
   
   player1 = new Robot(width / 8, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
   player2 = new Robot(width - width / 8, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
@@ -80,8 +85,11 @@ void draw()
 {
   background(255);
   
-  player1.input(keysPressed, keyCodes);
-  player2.input(keysPressed, keyCodes);
+  controllers.update();
+  
+  player1.input(keysPressed, keyCodes, controllers.getState(0));
+  player2.input(keysPressed, keyCodes, controllers.getState(1));
+  println(controllers.getNumControllers());
   player1.update(objects, cubes, balances);
   player2.update(objects, cubes, balances);
   
@@ -154,4 +162,9 @@ void keyReleased()
 {
   keysPressed.remove(Character.toLowerCase(key));
   keyCodes.remove(keyCode); 
+}
+
+void exit()
+{
+  controllers.quitSDLGamepad();
 }

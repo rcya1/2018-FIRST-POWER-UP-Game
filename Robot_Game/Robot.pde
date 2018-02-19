@@ -39,8 +39,8 @@ class Robot
     a_velocity = 0;
     a_acceleration = 0;
     
-    this.speed = width / 1000.0;
-    this.a_speed = 0.5;
+    this.speed = width / 2000.0;
+    this.a_speed = 0.3;
     
     this.maxSpeed = width / 200.0;
     
@@ -59,7 +59,7 @@ class Robot
     this.strafeDrive = false;
     this.wasd = wasd;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.5;
+    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
@@ -291,15 +291,23 @@ class Robot
     drawArea(frontCollisionBox, intakeColor);
   }
   
-  void input(HashSet<Character> keys, HashSet<Integer> keyCodes)
+  void input(HashSet<Character> keys, HashSet<Integer> keyCodes, ControllerState controller)
   {
-    strafeDrive = (keyCodes.contains(SHIFT) && wasd) || ((keys.contains('/') || keys.contains('?')) && !wasd);
-    
-    if(!strafeDrive) normalControl(keys, keyCodes);
-    else strafeControl(keys, keyCodes, false);
-    
-    intakeActive = (keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd);
-    if(!((keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd))) canIntake = true;
+    if(controller.isConnected)
+    {
+      if(controller.a) normalControl(controller);
+      intakeActive = controller.b;
+    }
+    else
+    {
+      strafeDrive = (keyCodes.contains(SHIFT) && wasd) || ((keys.contains('/') || keys.contains('?')) && !wasd);
+      
+      if(!strafeDrive) normalControl(keys, keyCodes);
+      else strafeControl(keys, keyCodes, false);
+      
+      intakeActive = (keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd);
+      if(!((keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd))) canIntake = true;
+    }
   }
   
   void normalControl(HashSet<Character> keys, HashSet<Integer> keyCodes)
@@ -341,6 +349,14 @@ class Robot
       PVector moveForce = PVector.fromAngle(radians(referenceAngle + 180)).mult(speed / 4.0);
       applyForce(moveForce);
     }
+  }
+  
+  void normalControl(ControllerState controller)
+  {
+    applyAngularForce((controller.leftStickX / abs(controller.leftStickX)) * controller.leftStickX * controller.leftStickX);
+    PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult((controller.leftStickY / abs(controller.leftStickY)) * 
+      controller.leftStickY * controller.leftStickY);
+    applyForce(moveForce);
   }
   
   boolean intersects(Area other)

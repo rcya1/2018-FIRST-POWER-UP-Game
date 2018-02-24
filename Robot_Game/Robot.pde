@@ -296,7 +296,11 @@ class Robot
     if(controller.isConnected)
     {
       if(controller.a) normalControl(controller);
+      else if(controller.lb) leftControl(controller);
+      else if(controller.rb) rightControl(controller);
+      
       intakeActive = controller.b;
+      if(!controller.b) canIntake = true;
     }
     else
     {
@@ -353,10 +357,44 @@ class Robot
   
   void normalControl(ControllerState controller)
   {
-    applyAngularForce((controller.leftStickX / abs(controller.leftStickX)) * controller.leftStickX * controller.leftStickX);
-    PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult((controller.leftStickY / abs(controller.leftStickY)) * 
-      controller.leftStickY * controller.leftStickY);
-    applyForce(moveForce);
+    if(abs(controller.leftStickX) > 0.2)
+    {
+      applyAngularForce((controller.leftStickX / abs(controller.leftStickX)) * controller.leftStickX * controller.leftStickX * a_speed);
+    }
+    if(abs(controller.leftStickY) > 0.2)
+    {
+      PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult((controller.leftStickY / abs(controller.leftStickY)) * 
+        controller.leftStickY * controller.leftStickY).mult(speed);
+      applyForce(moveForce);
+    }
+  }
+  
+  void leftControl(ControllerState controller)
+  {
+    if(abs(controller.rightStickX) > 0.2)
+    {
+      applyAngularForce((controller.rightStickX / abs(controller.rightStickX)) * controller.rightStickX * controller.rightStickX * a_speed);
+    }
+    if(abs(controller.leftStickY) > 0.2)
+    {
+      PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult((controller.leftStickY / abs(controller.leftStickY)) * 
+        controller.leftStickY * controller.leftStickY).mult(speed);
+      applyForce(moveForce);
+    }
+  }
+  
+  void rightControl(ControllerState controller)
+  {
+    if(abs(controller.leftStickX) > 0.2)
+    {
+      applyAngularForce((controller.leftStickX / abs(controller.leftStickX)) * controller.leftStickX * controller.leftStickX * a_speed);
+    }
+    if(abs(controller.rightStickY) > 0.2)
+    {
+      PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult((controller.rightStickY / abs(controller.rightStickY)) * 
+        controller.rightStickY * controller.rightStickY).mult(speed);
+      applyForce(moveForce);
+    }
   }
   
   boolean intersects(Area other)

@@ -89,7 +89,7 @@ void draw()
   
   player1.input(keysPressed, keyCodes, controllers.getState(0));
   player2.input(keysPressed, keyCodes, controllers.getState(1));
-  println(controllers.getNumControllers());
+  
   player1.update(objects, cubes, balances);
   player2.update(objects, cubes, balances);
   
@@ -128,7 +128,7 @@ void draw()
   text(score[0], width / 3, height / 10);
   text(score[1], width * 2.0 / 3, height / 10);
   
-  println(frameRate);
+  println(player2.position, player2.velocity, player2.acceleration);
 }
 
 void drawArea(Area area, color fillColor)

@@ -61,6 +61,12 @@ void setup()
   cubes = new ArrayList<Cube>();
   cubes.add(new Cube(width / 3, height / 3));
   cubes.add(new Cube(width / 3, height / 3 + 60));
+  cubes.add(new Cube(width / 3, height / 3 + 120));
+  cubes.add(new Cube(width / 3, height / 3 + 180));
+  cubes.add(new Cube(width / 3, height / 3 + 240));
+  cubes.add(new Cube(width / 3, height / 3 + 300));
+  cubes.add(new Cube(width / 3, height / 3 + 360));
+  cubes.add(new Cube(width / 3, height / 3 + 420));
   
   objects = new ArrayList<Area>();
   
@@ -128,7 +134,8 @@ void draw()
   text(score[0], width / 3, height / 10);
   text(score[1], width * 2.0 / 3, height / 10);
   
-  println(player2.position, player2.velocity, player2.acceleration);
+  //println(player2.position, player2.velocity, player2.acceleration);
+  println(frameRate);
 }
 
 void drawArea(Area area, color fillColor)

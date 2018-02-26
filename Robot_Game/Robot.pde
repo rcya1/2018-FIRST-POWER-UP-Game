@@ -59,7 +59,7 @@ class Robot
     this.strafeDrive = false;
     this.wasd = wasd;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2;
+    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2.5;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
@@ -289,6 +289,22 @@ class Robot
     popMatrix();
     
     drawArea(frontCollisionBox, intakeColor);
+
+    pushMatrix();
+    
+    translate(position.x, position.y);
+    rotate(radians(angle));
+    
+    if(this.cube != null)
+    {
+      fill(255, 255, 0);
+      rect(0, -h / 2.5, width / 55, width / 55);
+    }
+    
+    popMatrix();
+    
+    //fill(255, 0, 0, 50);
+    //ellipse(position.x, position.y, sqrt(checkDistance), sqrt(checkDistance));
   }
   
   void input(HashSet<Character> keys, HashSet<Integer> keyCodes, ControllerState controller)
@@ -298,6 +314,7 @@ class Robot
       if(controller.a) normalControl(controller);
       else if(controller.lb) leftControl(controller);
       else if(controller.rb) rightControl(controller);
+      else if(controller.x) strafeControl(controller);
       
       intakeActive = controller.b;
       if(!controller.b) canIntake = true;
@@ -393,6 +410,19 @@ class Robot
     {
       PVector moveForce = PVector.fromAngle(radians(angle - 90)).mult((controller.rightStickY / abs(controller.rightStickY)) * 
         controller.rightStickY * controller.rightStickY).mult(speed);
+      applyForce(moveForce);
+    }
+  }
+  
+  void strafeControl(ControllerState controller)
+  {
+    if(abs(controller.rightStickX) > 0.2)
+    {
+      applyAngularForce((controller.rightStickX / abs(controller.rightStickX)) * controller.rightStickX * controller.rightStickX * a_speed);
+    }
+    if(controller.leftStickMagnitude > 0.2)
+    {
+      PVector moveForce = PVector.fromAngle(radians(-controller.leftStickAngle)).mult(controller.leftStickMagnitude * controller.leftStickMagnitude).mult(speed / 4.0);
       applyForce(moveForce);
     }
   }

@@ -52,21 +52,69 @@ void setup()
   controllers = new ControllerManager();
   controllers.initSDLGamepad();
   
-  player1 = new Robot(width / 8, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
-  player2 = new Robot(width - width / 8, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
+  player1 = new Robot(width / 10, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
+  player2 = new Robot(width - width / 10, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
   
   player1.setOppRobot(player2);
   player2.setOppRobot(player1);
   
   cubes = new ArrayList<Cube>();
-  cubes.add(new Cube(width / 3, height / 3));
-  cubes.add(new Cube(width / 3, height / 3 + 60));
-  cubes.add(new Cube(width / 3, height / 3 + 120));
-  cubes.add(new Cube(width / 3, height / 3 + 180));
-  cubes.add(new Cube(width / 3, height / 3 + 240));
-  cubes.add(new Cube(width / 3, height / 3 + 300));
-  cubes.add(new Cube(width / 3, height / 3 + 360));
-  cubes.add(new Cube(width / 3, height / 3 + 420));
+  
+  float initY = height / 3 + width / 110;
+  float endY = height / 3 - width / 110 + height / 3;
+  float steppingY = (endY - initY) / 5;
+  
+  float leftX = width / 4 + width / 30 + width / 110;
+  float rightX = width * 3.0 / 4 - width / 30 - width / 110;
+  
+  cubes.add(new Cube(leftX, initY + 0 * steppingY));
+  cubes.add(new Cube(leftX, initY + 1 * steppingY));
+  cubes.add(new Cube(leftX, initY + 2 * steppingY));
+  cubes.add(new Cube(leftX, initY + 3 * steppingY));
+  cubes.add(new Cube(leftX, initY + 4 * steppingY));
+  cubes.add(new Cube(leftX, initY + 5 * steppingY));
+  
+  cubes.add(new Cube(rightX, initY + 0 * steppingY));
+  cubes.add(new Cube(rightX, initY + 1 * steppingY));
+  cubes.add(new Cube(rightX, initY + 2 * steppingY));
+  cubes.add(new Cube(rightX, initY + 3 * steppingY));
+  cubes.add(new Cube(rightX, initY + 4 * steppingY));
+  cubes.add(new Cube(rightX, initY + 5 * steppingY));
+  
+  initY = height / 2;
+  float step = height * 1.65 / 55;
+  
+  leftX = width / 4 - width / 30 - width / 110;
+  rightX = width * 3.0 / 4 + width / 30 + width / 110;
+  
+  cubes.add(new Cube(leftX, initY));
+  cubes.add(new Cube(leftX, initY - step));
+  cubes.add(new Cube(leftX, initY + step));
+  cubes.add(new Cube(leftX - step, initY - step / 2));
+  cubes.add(new Cube(leftX - step, initY + step / 2));
+  cubes.add(new Cube(leftX - step * 2, initY));
+  
+  cubes.add(new Cube(leftX, initY - step / 2));
+  cubes.add(new Cube(leftX, initY + step / 2));
+  cubes.add(new Cube(leftX - step, initY));
+  
+  cubes.add(new Cube(leftX, initY));
+  
+  
+  
+  cubes.add(new Cube(rightX, initY));
+  cubes.add(new Cube(rightX, initY - step));
+  cubes.add(new Cube(rightX, initY + step));
+  cubes.add(new Cube(rightX + step, initY - step / 2));
+  cubes.add(new Cube(rightX + step, initY + step / 2));
+  cubes.add(new Cube(rightX + step * 2, initY));
+  
+  cubes.add(new Cube(rightX, initY - step / 2));
+  cubes.add(new Cube(rightX, initY + step / 2));
+  cubes.add(new Cube(rightX + step, initY));
+  
+  cubes.add(new Cube(rightX, initY));
+  
   
   objects = new ArrayList<Area>();
   
@@ -109,12 +157,24 @@ void draw()
     balance.update(cubes);
   }
   
+  noStroke();
   for(Area area : objects)
   {
     drawArea(area, color(120));
   }
   
   rectMode(CENTER);
+  
+  fill(255, 0, 0);
+  rect(fenceWidth / 2, height / 2, fenceWidth, height - fenceWidth * 2);
+  
+  fill(0, 0, 255);
+  rect(width - fenceWidth / 2, height / 2, fenceWidth, height - fenceWidth * 2);
+  
+  stroke(0);
+  
+  //Draw shadows on the scale
+  balances.get(0).drawShadows();
   
   player1.draw();
   player2.draw();

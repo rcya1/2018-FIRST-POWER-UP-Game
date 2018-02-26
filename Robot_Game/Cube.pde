@@ -46,9 +46,12 @@ class Cube
     if(intersects(area) || intersects(robot.collisionBox)) return true;
     for(Cube cube : cubes)
     {
-      if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+      if(!cube.counted)
       {
-        if(intersects(cube.getArea())) return true;
+        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+        {
+          if(intersects(cube.getArea())) return true;
+        }
       }
     }
     for(Balance balance : balances)

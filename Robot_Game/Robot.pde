@@ -59,7 +59,7 @@ class Robot
     this.strafeDrive = false;
     this.wasd = wasd;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2.5;
+    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.25;
   }
   
   void update(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
@@ -125,20 +125,9 @@ class Robot
       
       if(oppRobot != null)
       {
-        if(PVector.sub(this.position, oppRobot.position).magSq() <= this.checkDistance)
+        if(PVector.sub(this.position, oppRobot.position).magSq() <= this.checkDistance + oppRobot.checkDistance)
         {
           if(intersects(oppRobot.collisionBox))
-          {
-            this.position.sub(move);
-          }
-        }
-      }
-      
-      for(Balance balance : balances)
-      {
-        if(PVector.sub(this.position, balance.position).magSq() <= this.checkDistance)
-        {
-          if(intersects(balance.getArea()))
           {
             this.position.sub(move);
             break;
@@ -146,11 +135,32 @@ class Robot
         }
       }
       
+      Balance checkBalance = null;
+    
+      if(position.x < width / 3)
+      {
+        checkBalance = balances.get(LEFT_SWITCH);
+      }
+      else if(position.x > width * 2.0 / 3)
+      {
+        checkBalance = balances.get(RIGHT_SWITCH);
+      }
+      else checkBalance = balances.get(SCALE);
+      
+      if(PVector.sub(this.position, checkBalance.position).magSq() <= this.checkDistance + checkBalance.checkDistance)
+      {
+        if(intersects(checkBalance.getArea()))
+        {
+          this.position.sub(move);
+          break;
+        }
+      }
+      
       for(Cube cube : cubes)
       {
         if(!cube.counted)
         {
-          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
           {
             if(intersects(cube.getArea()))
             {
@@ -176,20 +186,9 @@ class Robot
       
       if(oppRobot != null)
       {
-        if(PVector.sub(this.position, oppRobot.position).magSq() <= this.checkDistance)
+        if(PVector.sub(this.position, oppRobot.position).magSq() <= this.checkDistance + oppRobot.checkDistance)
         {
           if(intersects(oppRobot.collisionBox))
-          {
-            this.angle -= moveAngle;
-          }
-        }
-      }
-      
-      for(Balance balance : balances)
-      {
-        if(PVector.sub(this.position, balance.position).magSq() <= this.checkDistance)
-        {
-          if(intersects(balance.getArea()))
           {
             this.angle -= moveAngle;
             break;
@@ -197,11 +196,32 @@ class Robot
         }
       }
       
+      Balance checkBalance = null;
+    
+      if(position.x < width / 3)
+      {
+        checkBalance = balances.get(LEFT_SWITCH);
+      }
+      else if(position.x > width * 2.0 / 3)
+      {
+        checkBalance = balances.get(RIGHT_SWITCH);
+      }
+      else checkBalance = balances.get(SCALE);
+      
+      if(PVector.sub(this.position, checkBalance.position).magSq() <= this.checkDistance + checkBalance.checkDistance)
+      {
+        if(intersects(checkBalance.getArea()))
+        {
+          this.angle -= moveAngle;
+          break;
+        }
+      }
+      
       for(Cube cube : cubes)
       {
         if(!cube.counted)
         {
-          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
           {
             if(intersects(cube.getArea()))
             {
@@ -230,7 +250,7 @@ class Robot
       Cube cube = (Cube) iterator.next();
       if(!cube.counted)
       {
-        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
         {
           if(intersectsFront(cube.getArea()))
           {

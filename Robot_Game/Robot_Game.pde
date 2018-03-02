@@ -40,6 +40,10 @@ int[] score;
 
 ControllerManager controllers;
 
+final int SCALE = 0;
+final int LEFT_SWITCH = 1;
+final int RIGHT_SWITCH = 2;
+
 void setup()
 {
   size(1000, 600);

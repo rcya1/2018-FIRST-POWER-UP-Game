@@ -27,6 +27,9 @@ class Cube
     rectMode(CENTER);
     fill(255, 255, 0);
     rect(position.x, position.y, w, h);
+    
+    //fill(255, 0, 0, 50);
+    //ellipse(position.x, position.y, sqrt(checkDistance), sqrt(checkDistance));
   }
   
   Area getArea()
@@ -48,22 +51,33 @@ class Cube
     {
       if(!cube.counted)
       {
-        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
         {
           if(intersects(cube.getArea())) return true;
         }
       }
     }
-    for(Balance balance : balances)
+    
+    Balance checkBalance = null;
+    
+    if(position.x < width / 3)
     {
-      if(PVector.sub(this.position, balance.position).magSq() <= this.checkDistance)
+      checkBalance = balances.get(LEFT_SWITCH);
+    }
+    else if(position.x > width * 2.0 / 3)
+    {
+      checkBalance = balances.get(RIGHT_SWITCH);
+    }
+    else checkBalance = balances.get(SCALE);
+    
+    if(PVector.sub(this.position, checkBalance.position).magSq() <= this.checkDistance + checkBalance.checkDistance)
+    {
+      if(intersects(checkBalance.getArea()))
       {
-        if(intersects(balance.getArea()))
-        {
-          if(!intersects(balance.getTopArea()) && !intersects(balance.getBottomArea())) return true;
-        }
+        if(!intersects(checkBalance.getTopArea()) && !intersects(checkBalance.getBottomArea())) return true;
       }
     }
+    
     return false;
   }
 }

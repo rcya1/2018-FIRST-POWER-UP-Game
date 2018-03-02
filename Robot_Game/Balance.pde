@@ -24,7 +24,7 @@ class Balance
     this.topCount = 0;
     this.bottomCount = 0;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2;
+    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.125;
   }
   
   void update(ArrayList<Cube> cubes)
@@ -38,7 +38,7 @@ class Balance
       {
         if(!cube.counted)
         {
-          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance)
+          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
           {
             Area cubeArea = cube.getArea();
             if(intersects(top, cubeArea))

@@ -40,6 +40,7 @@ int[] score;
 int timer;
 int countDown;
 int countDownAlpha;
+int time, prevTime;
 
 ControllerManager controllers;
 
@@ -156,6 +157,9 @@ void resetGame()
   countDown = COUNTDOWN_LENGTH;
   countDownAlpha = 255;
   timer = MATCH_LENGTH;
+  
+  time = millis();
+  prevTime = millis();
 }
 
 void draw()
@@ -221,10 +225,13 @@ void draw()
   text(score[1], width * 2.0 / 3, height / 10);
   text(timer, width / 2, height / 10);
   
+  if(frameCount == 1) prevTime = millis();
   if(countDown != 0)
   {
-    if(frameCount % FPS == 0)
+    time = millis();
+    if(time - prevTime >= 1000)
     {
+      prevTime = time;
       countDown--;
       countDownAlpha = 255;
     }
@@ -235,7 +242,7 @@ void draw()
     textSize(width / 10);
     textAlign(CENTER);
     
-    String countDownText = countDown == 0 ? "GO!" : Integer.toString(countDown);
+    String countDownText = countDown == 0 ? "GO" : Integer.toString(countDown);
     
     text(countDownText, width / 2, height / 2);
     countDownAlpha -= 5;
@@ -284,9 +291,4 @@ void keyReleased()
     keysPressed.remove(Character.toLowerCase(key));
     keyCodes.remove(keyCode); 
   }
-}
-
-void exit()
-{
-  controllers.quitSDLGamepad();
 }

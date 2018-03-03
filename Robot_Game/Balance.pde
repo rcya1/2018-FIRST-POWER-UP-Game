@@ -10,6 +10,7 @@ class Balance
   int bottomCount;
   
   float checkDistance;
+  int prevTime;
   
   Balance(float x, float y, float w, float h, boolean isScale, boolean redTop, boolean left)
   {
@@ -25,14 +26,17 @@ class Balance
     this.bottomCount = 0;
     
     this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.125;
+    this.prevTime = millis();
   }
   
   void update(ArrayList<Cube> cubes)
   {
     if(timer != 0 && countDown == 0)
     {
-      if(frameCount % FPS == 0)
+      int time = millis();
+      if(time - prevTime >= 1000)
       {
+        prevTime = time;
         if(isScale) timer--;
         
         Area top = getTopArea();

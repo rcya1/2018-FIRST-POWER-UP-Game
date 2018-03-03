@@ -29,56 +29,61 @@ class Balance
   
   void update(ArrayList<Cube> cubes)
   {
-    if(frameCount % FPS == 0)
+    if(timer != 0 && countDown == 0)
     {
-      Area top = getTopArea();
-      Area bottom = getBottomArea();
-      
-      for(Cube cube : cubes)
+      if(frameCount % FPS == 0)
       {
-        if(!cube.counted)
+        if(isScale) timer--;
+        
+        Area top = getTopArea();
+        Area bottom = getBottomArea();
+        
+        for(Cube cube : cubes)
         {
-          if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
+          if(!cube.counted)
           {
-            Area cubeArea = cube.getArea();
-            if(intersects(top, cubeArea))
+            if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
             {
-              topCount++;
-              cube.counted = true;
-            }
-            else if(intersects(bottom, cubeArea))
-            {
-              bottomCount++;
-              cube.counted = true;
+              Area cubeArea = cube.getArea();
+              if(intersects(top, cubeArea))
+              {
+                topCount++;
+                cube.counted = true;
+              }
+              else if(intersects(bottom, cubeArea))
+              {
+                bottomCount++;
+                cube.counted = true;
+              }
             }
           }
         }
-      }
-      
-      if(topCount > bottomCount)
-      {
-        if(isScale)
+        
+        if(topCount > bottomCount)
         {
-          if(redTop) score[0]++;
-          else score[1]++;
+          if(isScale)
+          {
+            if(redTop) score[0]++;
+            else score[1]++;
+          }
+          else
+          {
+            if(left && redTop) score[0]++;
+            else if(!left && !redTop) score[1]++;
+          }
         }
-        else
+        if(topCount < bottomCount)
         {
-          if(left && redTop) score[0]++;
-          else if(!left && !redTop) score[1]++;
-        }
-      }
-      if(topCount < bottomCount)
-      {
-        if(isScale)
-        {
-          if(redTop) score[1]++;
-          else score[0]++;
-        }
-        else
-        {
-          if(left && !redTop) score[0]++;
-          else if(!left && redTop) score[1]++;
+          if(isScale)
+          {
+            if(redTop) score[1]++;
+            else score[0]++;
+          }
+          else
+          {
+            if(left && !redTop) score[0]++;
+            else if(!left && redTop) score[1]++;
+          }
         }
       }
     }

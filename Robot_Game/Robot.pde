@@ -28,7 +28,6 @@ class Robot
   
   float checkDistance;
   
-  //TODO Optimize this
   Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {
     position = new PVector(x, y);

@@ -37,12 +37,18 @@ int fenceWidth;
 ArrayList<Balance> balances;
 
 int[] score;
+int timer;
+int countDown;
+int countDownAlpha;
 
 ControllerManager controllers;
 
 final int SCALE = 0;
 final int LEFT_SWITCH = 1;
 final int RIGHT_SWITCH = 2;
+
+final int MATCH_LENGTH = 150;
+final int COUNTDOWN_LENGTH = 5;
 
 void setup()
 {
@@ -56,13 +62,32 @@ void setup()
   controllers = new ControllerManager();
   controllers.initSDLGamepad();
   
+  cubes = new ArrayList<Cube>();
+  balances = new ArrayList<Balance>();
+  
+  objects = new ArrayList<Area>();
+  
+  fenceWidth = width / 50;
+  fenceHorizontal = new Area(new Rectangle(0, 0, width, fenceWidth));
+  fenceHorizontal.add(new Area(new Rectangle(0, 0, fenceWidth, height)));
+  fenceVertical = new Area(new Rectangle(width - fenceWidth, 0, fenceWidth, height));
+  fenceVertical.add(new Area(new Rectangle(0, height - fenceWidth, width, fenceWidth)));
+  
+  objects.add(fenceHorizontal);
+  objects.add(fenceVertical);
+  
+  resetGame();
+}
+
+void resetGame()
+{
   player1 = new Robot(width / 10, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
   player2 = new Robot(width - width / 10, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
   
   player1.setOppRobot(player2);
   player2.setOppRobot(player1);
   
-  cubes = new ArrayList<Cube>();
+  cubes.clear();
   
   float initY = height / 3 + width / 110;
   float endY = height / 3 - width / 110 + height / 3;
@@ -120,16 +145,7 @@ void setup()
   cubes.add(new Cube(rightX, initY));
   
   
-  objects = new ArrayList<Area>();
-  
-  fenceWidth = width / 50;
-  fenceHorizontal = new Area(new Rectangle(0, 0, width, fenceWidth));
-  fenceHorizontal.add(new Area(new Rectangle(0, 0, fenceWidth, height)));
-  fenceVertical = new Area(new Rectangle(width - fenceWidth, 0, fenceWidth, height));
-  fenceVertical.add(new Area(new Rectangle(0, height - fenceWidth, width, fenceWidth)));
-  
-  objects.add(fenceHorizontal);
-  objects.add(fenceVertical);
+  balances.clear();
   
   balances = new ArrayList<Balance>();
   balances.add(new Balance(width / 2, height / 2, width / 12.5, height / 2, true, Math.random() < 0.5, false)); //Scale
@@ -137,12 +153,15 @@ void setup()
   balances.add(new Balance(width * 3.0 / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, false)); //Right Switch
   
   score = new int[] {0, 0};
+  countDown = COUNTDOWN_LENGTH;
+  countDownAlpha = 255;
+  timer = MATCH_LENGTH;
 }
 
 void draw()
 {
   background(255);
-  
+ 
   controllers.update();
   
   player1.input(keysPressed, keyCodes, controllers.getState(0));
@@ -194,9 +213,33 @@ void draw()
   }
   
   textSize(height / 15);
+  
   fill(0);
+  textSize(width / 25);
+  textAlign(CENTER);
   text(score[0], width / 3, height / 10);
   text(score[1], width * 2.0 / 3, height / 10);
+  text(timer, width / 2, height / 10);
+  
+  if(countDown != 0)
+  {
+    if(frameCount % FPS == 0)
+    {
+      countDown--;
+      countDownAlpha = 255;
+    }
+  }
+  if(countDownAlpha > 0)
+  {
+    fill(255, countDownAlpha);
+    textSize(width / 10);
+    textAlign(CENTER);
+    
+    String countDownText = countDown == 0 ? "GO!" : Integer.toString(countDown);
+    
+    text(countDownText, width / 2, height / 2);
+    countDownAlpha -= 5;
+  }
   
   //println(player2.position, player2.velocity, player2.acceleration);
   println(frameRate);
@@ -225,14 +268,22 @@ void drawArea(Area area, color fillColor)
 
 void keyPressed()
 {
-  keysPressed.add(Character.toLowerCase(key));
-  keyCodes.add(keyCode);
+  if(countDown == 0)
+  {
+    keysPressed.add(Character.toLowerCase(key));
+    keyCodes.add(keyCode);
+    
+    if(keysPressed.contains('r')) resetGame();
+  }
 }
 
 void keyReleased()
 {
-  keysPressed.remove(Character.toLowerCase(key));
-  keyCodes.remove(keyCode); 
+  if(countDown == 0)
+  {
+    keysPressed.remove(Character.toLowerCase(key));
+    keyCodes.remove(keyCode); 
+  }
 }
 
 void exit()

@@ -4,8 +4,8 @@
 	"isShellCommand": true,
 	"args": [
         "--force",
-		"--sketch=${workspaceRoot}\\Robot_Game",
-		"--output=${workspaceRoot}\\out",
+		"--sketch=${workspaceRoot}/Robot_Game",
+		"--output=${workspaceRoot}/out",
 		"--run"
     ]
 }

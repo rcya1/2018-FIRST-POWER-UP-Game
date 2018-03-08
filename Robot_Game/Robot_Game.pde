@@ -38,7 +38,6 @@ HashSet<Integer> keyCodes;
 Robot player1;
 Robot player2;
 ArrayList<Cube> cubes;
-ArrayList<Area> objects;
 Area fenceHorizontal;
 Area fenceVertical;
 
@@ -80,17 +79,6 @@ void setup()
   
   cubes = new ArrayList<Cube>();
   balances = new ArrayList<Balance>();
-  
-  objects = new ArrayList<Area>();
-  
-  fenceWidth = width / 50;
-  fenceHorizontal = new Area(new Rectangle(0, 0, width, fenceWidth));
-  fenceHorizontal.add(new Area(new Rectangle(0, 0, fenceWidth, height)));
-  fenceVertical = new Area(new Rectangle(width - fenceWidth, 0, fenceWidth, height));
-  fenceVertical.add(new Area(new Rectangle(0, height - fenceWidth, width, fenceWidth)));
-  
-  objects.add(fenceHorizontal);
-  objects.add(fenceVertical);
   
   resetGame();
 }
@@ -165,6 +153,12 @@ void resetGame()
   balances.add(new Balance(width / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, true)); //Left Switch
   balances.add(new Balance(width * 3.0 / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, false)); //Right Switch
   
+  fenceWidth = width / 50;
+  new Boundary(width / 2, fenceWidth / 2, width, fenceWidth);
+  new Boundary(width / 2, height - fenceWidth / 2, width, fenceWidth);
+  new Boundary(fenceWidth / 2, height / 2, fenceWidth, height);
+  new Boundary(width - fenceWidth / 2, height / 2, fenceWidth, height);
+
   score = new int[] {0, 0};
   countDown = COUNTDOWN_LENGTH;
   countDownAlpha = 255;
@@ -184,8 +178,8 @@ void draw()
   box2D.step();
   background(255);
   
-  player1.update(objects, cubes, balances);
-  player2.update(objects, cubes, balances);
+  player1.update(cubes, balances);
+  player2.update(cubes, balances);
   
   for(Cube cube : cubes)
   {
@@ -197,13 +191,11 @@ void draw()
     balance.update(cubes);
   }
   
-  noStroke();
-  for(Area area : objects)
-  {
-    drawArea(area, color(120));
-  }
-  
   rectMode(CENTER);
+
+  fill(120);
+  rect(width / 2, fenceWidth / 2, width, fenceWidth);
+  rect(width / 2, height - fenceWidth / 2, width, fenceWidth);
   
   fill(255, 0, 0);
   rect(fenceWidth / 2, height / 2, fenceWidth, height - fenceWidth * 2);

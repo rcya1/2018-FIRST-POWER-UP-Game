@@ -58,7 +58,7 @@ class Robot
     body.createFixture(fixtureDef);
   }
   
-  void update(ArrayList<Area> objects, ArrayList<Cube> cubes, ArrayList<Balance> balances)
+  void update(ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
     
   }

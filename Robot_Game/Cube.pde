@@ -1,20 +1,37 @@
 class Cube
 {
-  PVector position;
   float w, h;
   boolean counted;
   
-  float checkDistance;
+  Body body;
   
   Cube(float x, float y)
   {
-    position = new PVector(x, y);
     this.w = width / 55;
     this.h = width / 55;
     
     counted = false;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2;
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyType.DYNAMIC;
+    bodyDef.position = box2D.coordPixelsToWorld(x, y);
+    bodyDef.linearDamping = 1.5;
+    bodyDef.angularDamping = 1.5;
+    
+    body = box2D.createBody(bodyDef);
+    
+    PolygonShape shape = new PolygonShape();
+    float box2DWidth = box2D.scalarPixelsToWorld(w);
+    float box2DHeight = box2D.scalarPixelsToWorld(h);
+    shape.setAsBox(box2DWidth / 2, box2DHeight / 2);
+    
+    FixtureDef fixtureDef = new FixtureDef();
+    fixtureDef.shape = shape;
+    fixtureDef.density = 2.0;
+    fixtureDef.friction = 1.0;
+    fixtureDef.restitution = 0.5;
+    
+    body.createFixture(fixtureDef);
   }
   
   void update()
@@ -24,60 +41,18 @@ class Cube
   
   void draw()
   {
+    pushMatrix();
+    
     rectMode(CENTER);
     fill(255, 255, 0);
-    rect(position.x, position.y, w, h);
+    Vec2 loc = box2D.getBodyPixelCoord(body);
+    translate(loc.x, loc.y);
+    rotate(-body.getAngle());
+    rect(0, 0, w, h);
+    
+    popMatrix();
     
     //fill(255, 0, 0, 50);
     //ellipse(position.x, position.y, sqrt(checkDistance), sqrt(checkDistance));
-  }
-  
-  Area getArea()
-  {
-    return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2), (int) w, (int) h));
-  }
-  
-  boolean intersects(Area other)
-  {
-    if(other == null) return false;
-    Area collisionBox = getArea();
-    return collisionBox.intersects(other.getBounds()) && other.intersects(collisionBox.getBounds());
-  }
-  
-  boolean intersects(Area area, ArrayList<Cube> cubes, Robot robot, ArrayList<Balance> balances)
-  {
-    if(intersects(area) || intersects(robot.collisionBox)) return true;
-    for(Cube cube : cubes)
-    {
-      if(!cube.counted)
-      {
-        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
-        {
-          if(intersects(cube.getArea())) return true;
-        }
-      }
-    }
-    
-    Balance checkBalance = null;
-    
-    if(position.x < width / 3)
-    {
-      checkBalance = balances.get(LEFT_SWITCH);
-    }
-    else if(position.x > width * 2.0 / 3)
-    {
-      checkBalance = balances.get(RIGHT_SWITCH);
-    }
-    else checkBalance = balances.get(SCALE);
-    
-    if(PVector.sub(this.position, checkBalance.position).magSq() <= this.checkDistance + checkBalance.checkDistance)
-    {
-      if(intersects(checkBalance.getArea()))
-      {
-        if(!intersects(checkBalance.getTopArea()) && !intersects(checkBalance.getBottomArea())) return true;
-      }
-    }
-    
-    return false;
   }
 }

@@ -9,8 +9,9 @@ class Balance
   int topCount;
   int bottomCount;
   
-  float checkDistance;
   int prevTime;
+  
+  Body body;
   
   Balance(float x, float y, float w, float h, boolean isScale, boolean redTop, boolean left)
   {
@@ -25,8 +26,26 @@ class Balance
     this.topCount = 0;
     this.bottomCount = 0;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.125;
     this.prevTime = millis();
+    
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyType.STATIC;
+    bodyDef.position = box2D.coordPixelsToWorld(x, y);
+    
+    body = box2D.createBody(bodyDef);
+    
+    PolygonShape shape = new PolygonShape();
+    float box2DWidth = box2D.scalarPixelsToWorld(w);
+    float box2DHeight = isScale ? box2D.scalarPixelsToWorld(h - w * 2) : box2D.scalarPixelsToWorld(h);
+    shape.setAsBox(box2DWidth / 2, box2DHeight / 2);
+    
+    FixtureDef fixtureDef = new FixtureDef();
+    fixtureDef.shape = shape;
+    fixtureDef.density = 1.0;
+    fixtureDef.friction = 0.3;
+    fixtureDef.restitution = 0.5;
+    
+    body.createFixture(fixtureDef);
   }
   
   void update(ArrayList<Cube> cubes)
@@ -46,20 +65,20 @@ class Balance
         {
           if(!cube.counted)
           {
-            if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
-            {
-              Area cubeArea = cube.getArea();
-              if(intersects(top, cubeArea))
-              {
-                topCount++;
-                cube.counted = true;
-              }
-              else if(intersects(bottom, cubeArea))
-              {
-                bottomCount++;
-                cube.counted = true;
-              }
-            }
+            //if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
+            //{
+            //  Area cubeArea = cube.getArea();
+            //  if(intersects(top, cubeArea))
+            //  {
+            //    topCount++;
+            //    cube.counted = true;
+            //  }
+            //  else if(intersects(bottom, cubeArea))
+            //  {
+            //    bottomCount++;
+            //    cube.counted = true;
+            //  }
+            //}
           }
         }
         

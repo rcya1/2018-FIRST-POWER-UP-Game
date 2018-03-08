@@ -1,3 +1,10 @@
+import shiffman.box2d.*;
+import org.jbox2d.dynamics.contacts.*;
+import org.jbox2d.dynamics.joints.*;
+import org.jbox2d.dynamics.*;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.common.*;
+
 import java.util.Random;
 import com.studiohartman.jamepad.*;
 import com.studiohartman.jamepad.tester.*;
@@ -21,6 +28,8 @@ import java.awt.geom.Area;
 import java.awt.Rectangle;
 import java.util.HashSet;
 
+Box2DProcessing box2D;
+
 static final int FPS = 60;
 
 HashSet<Character> keysPressed;
@@ -32,6 +41,7 @@ ArrayList<Cube> cubes;
 ArrayList<Area> objects;
 Area fenceHorizontal;
 Area fenceVertical;
+
 int fenceWidth;
 
 ArrayList<Balance> balances;
@@ -49,13 +59,18 @@ final int LEFT_SWITCH = 1;
 final int RIGHT_SWITCH = 2;
 
 final int MATCH_LENGTH = 150;
-final int COUNTDOWN_LENGTH = 5;
+final int COUNTDOWN_LENGTH = 0;
 
 void setup()
 {
   size(1000, 600);
   //fullScreen();
   frameRate(FPS);
+  
+  box2D = new Box2DProcessing(this);
+  box2D.createWorld();
+  box2D.listenForCollisions();
+  box2D.setGravity(0, 0);
   
   keysPressed = new HashSet<Character>();
   keyCodes = new HashSet<Integer>();
@@ -84,9 +99,6 @@ void resetGame()
 {
   player1 = new Robot(width / 10, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
   player2 = new Robot(width - width / 10, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
-  
-  player1.setOppRobot(player2);
-  player2.setOppRobot(player1);
   
   cubes.clear();
   
@@ -124,11 +136,11 @@ void resetGame()
   cubes.add(new Cube(leftX - step, initY + step / 2));
   cubes.add(new Cube(leftX - step * 2, initY));
   
-  cubes.add(new Cube(leftX, initY - step / 2));
-  cubes.add(new Cube(leftX, initY + step / 2));
-  cubes.add(new Cube(leftX - step, initY));
+  //cubes.add(new Cube(leftX, initY - step / 2));
+  //cubes.add(new Cube(leftX, initY + step / 2));
+  //cubes.add(new Cube(leftX - step, initY));
   
-  cubes.add(new Cube(leftX, initY));
+  //cubes.add(new Cube(leftX, initY));
   
   
   
@@ -139,11 +151,11 @@ void resetGame()
   cubes.add(new Cube(rightX + step, initY + step / 2));
   cubes.add(new Cube(rightX + step * 2, initY));
   
-  cubes.add(new Cube(rightX, initY - step / 2));
-  cubes.add(new Cube(rightX, initY + step / 2));
-  cubes.add(new Cube(rightX + step, initY));
+  //cubes.add(new Cube(rightX, initY - step / 2));
+  //cubes.add(new Cube(rightX, initY + step / 2));
+  //cubes.add(new Cube(rightX + step, initY));
   
-  cubes.add(new Cube(rightX, initY));
+  //cubes.add(new Cube(rightX, initY));
   
   
   balances.clear();
@@ -164,12 +176,13 @@ void resetGame()
 
 void draw()
 {
-  background(255);
  
   controllers.update();
-  
   player1.input(keysPressed, keyCodes, controllers.getState(0));
   player2.input(keysPressed, keyCodes, controllers.getState(1));
+  
+  box2D.step();
+  background(255);
   
   player1.update(objects, cubes, balances);
   player2.update(objects, cubes, balances);
@@ -249,7 +262,7 @@ void draw()
   }
   
   //println(player2.position, player2.velocity, player2.acceleration);
-  println(frameRate);
+  //println(frameRate);
 }
 
 void drawArea(Area area, color fillColor)

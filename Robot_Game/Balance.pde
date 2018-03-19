@@ -34,11 +34,93 @@ class Balance
     
     body = box2D.createBody(bodyDef);
     
-    PolygonShape shape = new PolygonShape();
+    // PolygonShape shape = new PolygonShape();
+    // float box2DWidth = box2D.scalarPixelsToWorld(w);
+    // float box2DHeight = isScale ? box2D.scalarPixelsToWorld(h - w * 2) : box2D.scalarPixelsToWorld(h);
+    // shape.setAsBox(box2DWidth / 2, box2DHeight / 2);
+
+    PolygonShape middleShape = new PolygonShape();
     float box2DWidth = box2D.scalarPixelsToWorld(w);
-    float box2DHeight = isScale ? box2D.scalarPixelsToWorld(h - w * 2) : box2D.scalarPixelsToWorld(h);
-    shape.setAsBox(box2DWidth / 2, box2DHeight / 2);
+    float box2DHeight = box2DHeight = box2D.scalarPixelsToWorld(h - w * 2); 
+    middleShape.setAsBox(box2DWidth / 2, box2DHeight / 2);
     
+    createFixture(middleShape);
+
+    float scaleFenceWidth = 4.0;
+
+    if(!isScale)
+    { 
+      PolygonShape topShape = new PolygonShape();
+      box2DWidth = box2D.scalarPixelsToWorld(w);
+      box2DHeight = box2D.scalarPixelsToWorld(scaleFenceWidth);
+      Vec2 offset = box2D.vectorPixelsToWorld(0, -h / 2.0 + scaleFenceWidth / 2);
+
+      topShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+      createFixture(topShape);
+
+
+      PolygonShape bottomShape = new PolygonShape();
+      box2DWidth = box2D.scalarPixelsToWorld(w);
+      box2DHeight = box2D.scalarPixelsToWorld(scaleFenceWidth);
+      offset = box2D.vectorPixelsToWorld(0, h / 2.0 - scaleFenceWidth / 2);
+
+      bottomShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+      createFixture(bottomShape);
+
+
+      PolygonShape leftShape = new PolygonShape();
+      box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
+      box2DHeight = box2D.scalarPixelsToWorld(h);
+      offset = box2D.vectorPixelsToWorld(-w / 2.0 + scaleFenceWidth / 2, 0);
+
+      leftShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+      createFixture(leftShape);
+
+
+      PolygonShape rightShape = new PolygonShape();
+      box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
+      box2DHeight = box2D.scalarPixelsToWorld(h);
+      offset = box2D.vectorPixelsToWorld(w / 2.0 - scaleFenceWidth / 2, 0);
+
+      rightShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+      createFixture(rightShape);
+    }
+
+    PolygonShape topShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    box2DHeight = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    Vec2 offset = box2D.vectorPixelsToWorld(0, -h / 4.0);
+    topShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+
+    FixtureDef topShapeFixtureDef = new FixtureDef();
+    topShapeFixtureDef.shape = topShape;
+    topShapeFixtureDef.density = 0.3;
+    topShapeFixtureDef.friction = 0.3;
+    topShapeFixtureDef.restitution = 0.5;
+    topShapeFixtureDef.isSensor = true;
+    topShapeFixtureDef.setUserData(new BalanceCollision(true, this));
+
+    body.createFixture(topShapeFixtureDef);
+
+    PolygonShape bottomShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    box2DHeight = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    offset = box2D.vectorPixelsToWorld(0, h / 4.0);
+    bottomShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+
+    FixtureDef bottomShapeFixtureDef = new FixtureDef();
+    bottomShapeFixtureDef.shape = bottomShape;
+    bottomShapeFixtureDef.density = 0.3;
+    bottomShapeFixtureDef.friction = 0.3;
+    bottomShapeFixtureDef.restitution = 0.5;
+    bottomShapeFixtureDef.isSensor = true;
+    bottomShapeFixtureDef.setUserData(new BalanceCollision(false, this));
+
+    body.createFixture(bottomShapeFixtureDef);
+  }
+
+  void createFixture(PolygonShape shape)
+  {
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
     fixtureDef.density = 1.0;

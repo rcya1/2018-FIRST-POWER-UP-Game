@@ -7,6 +7,7 @@ class Robot
   float a_speed;
   
   Cube cube;
+  Cube contactCube;
   
   boolean intakeActive;
   boolean canIntake;
@@ -56,11 +57,70 @@ class Robot
     fixtureDef.restitution = 0.5;
     
     body.createFixture(fixtureDef);
+
+    PolygonShape intakeShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w / 2);
+    box2DHeight = box2D.scalarPixelsToWorld(w / 2);
+    Vec2 offset = box2D.vectorPixelsToWorld(0, h * 0.4);
+    intakeShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+
+    FixtureDef intakeFixtureDef = new FixtureDef();
+    intakeFixtureDef.shape = intakeShape;
+    intakeFixtureDef.density = 0.3;
+    intakeFixtureDef.friction = 0.3;
+    intakeFixtureDef.restitution = 0.5;
+    intakeFixtureDef.isSensor = true;
+    intakeFixtureDef.setUserData(this);
+
+    body.createFixture(intakeFixtureDef);
   }
   
   void update(ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
-    
+    updateCubes(cubes);
+  }
+
+  void updateCubes(ArrayList<Cube> cubes)
+  {
+    if(intakeActive && canIntake && this.cube == null) checkIntake(cubes);
+    if(intakeActive && canIntake && this.cube != null) ejectCube(cubes);
+  }
+
+  void checkIntake(ArrayList<Cube> cubes)
+  {
+    if(this.contactCube != null)
+    {
+      this.cube = contactCube;
+      
+      cubes.remove(contactCube);
+      contactCube.removeFromWorld();
+      
+      this.contactCube = null;
+      intakeActive = false;
+      canIntake = false;
+    }
+  }
+
+  void ejectCube(ArrayList<Cube> cubes)
+  {
+    PVector position = box2D.getBodyPixelCoordPVector(body);
+    position.add(PVector.fromAngle((-body.getAngle() + PI / 2.0)).mult(h * 3 / 4.0));
+
+    this.cube.addToWorld(position);
+    cubes.add(this.cube);
+
+    this.cube = null;
+    this.canIntake = false;
+  }
+
+  void contactCube(Cube cube)
+  {
+    this.contactCube = cube;
+  }
+
+  void endContactCube(Cube cube)
+  {
+    this.contactCube = null;
   }
   
   void applyForce(PVector force)
@@ -81,7 +141,12 @@ class Robot
     Vec2 loc = box2D.getBodyPixelCoord(body);
     translate(loc.x, loc.y);
     rotate(-body.getAngle());
+
+    fill(robotColor);
     rect(0, 0, w, h);
+
+    fill(intakeColor);
+    rect(0, w * 3.0 / 4, w / 2, w / 2);
     
     popMatrix();
   }

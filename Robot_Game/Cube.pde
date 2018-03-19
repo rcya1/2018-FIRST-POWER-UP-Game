@@ -3,7 +3,12 @@ class Cube
   float w, h;
   boolean counted;
   
+  BodyDef bodyDef;
   Body body;
+  FixtureDef fixtureDef;  
+
+  Vec2 lastPosition;
+  boolean destroyed;
   
   Cube(float x, float y)
   {
@@ -12,7 +17,7 @@ class Cube
     
     counted = false;
     
-    BodyDef bodyDef = new BodyDef();
+    bodyDef = new BodyDef();
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
     bodyDef.linearDamping = 1.5;
@@ -25,13 +30,17 @@ class Cube
     float box2DHeight = box2D.scalarPixelsToWorld(h);
     shape.setAsBox(box2DWidth / 2, box2DHeight / 2);
     
-    FixtureDef fixtureDef = new FixtureDef();
+    fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
     fixtureDef.density = 2.0;
     fixtureDef.friction = 1.0;
     fixtureDef.restitution = 0.5;
+    fixtureDef.setUserData(this);
     
     body.createFixture(fixtureDef);
+
+    lastPosition = new Vec2();
+    destroyed = false;
   }
   
   void update()
@@ -45,7 +54,8 @@ class Cube
     
     rectMode(CENTER);
     fill(255, 255, 0);
-    Vec2 loc = box2D.getBodyPixelCoord(body);
+    Vec2 loc = destroyed ? lastPosition : box2D.getBodyPixelCoord(body);
+    lastPosition = loc;
     translate(loc.x, loc.y);
     rotate(-body.getAngle());
     rect(0, 0, w, h);
@@ -54,5 +64,19 @@ class Cube
     
     //fill(255, 0, 0, 50);
     //ellipse(position.x, position.y, sqrt(checkDistance), sqrt(checkDistance));
+  }
+
+  void removeFromWorld()
+  {
+    if(body != null) box2D.destroyBody(body);
+    destroyed = true;
+  }
+
+  void addToWorld(PVector position)
+  {
+    bodyDef.position = box2D.coordPixelsToWorld(position);
+    body = box2D.createBody(bodyDef);
+    body.createFixture(fixtureDef);
+    destroyed = false;
   }
 }

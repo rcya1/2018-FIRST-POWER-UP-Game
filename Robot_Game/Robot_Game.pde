@@ -124,26 +124,12 @@ void resetGame()
   cubes.add(new Cube(leftX - step, initY + step / 2));
   cubes.add(new Cube(leftX - step * 2, initY));
   
-  //cubes.add(new Cube(leftX, initY - step / 2));
-  //cubes.add(new Cube(leftX, initY + step / 2));
-  //cubes.add(new Cube(leftX - step, initY));
-  
-  //cubes.add(new Cube(leftX, initY));
-  
-  
-  
   cubes.add(new Cube(rightX, initY));
   cubes.add(new Cube(rightX, initY - step));
   cubes.add(new Cube(rightX, initY + step));
   cubes.add(new Cube(rightX + step, initY - step / 2));
   cubes.add(new Cube(rightX + step, initY + step / 2));
   cubes.add(new Cube(rightX + step * 2, initY));
-  
-  //cubes.add(new Cube(rightX, initY - step / 2));
-  //cubes.add(new Cube(rightX, initY + step / 2));
-  //cubes.add(new Cube(rightX + step, initY));
-  
-  //cubes.add(new Cube(rightX, initY));
   
   
   balances.clear();
@@ -153,11 +139,11 @@ void resetGame()
   balances.add(new Balance(width / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, true)); //Left Switch
   balances.add(new Balance(width * 3.0 / 4, height / 2, width / 15, height / 3, false, Math.random() < 0.5, false)); //Right Switch
   
-  fenceWidth = width / 50;
-  new Boundary(width / 2, fenceWidth / 2, width, fenceWidth);
-  new Boundary(width / 2, height - fenceWidth / 2, width, fenceWidth);
-  new Boundary(fenceWidth / 2, height / 2, fenceWidth, height);
-  new Boundary(width - fenceWidth / 2, height / 2, fenceWidth, height);
+  fenceWidth = width / 40;
+  new Boundary(width / 2, 0, width, fenceWidth * 2);
+  new Boundary(width / 2, height, width, fenceWidth * 2);
+  new Boundary(0, height / 2, fenceWidth * 2, height);
+  new Boundary(width, height / 2, fenceWidth * 2, height);
 
   score = new int[] {0, 0};
   countDown = COUNTDOWN_LENGTH;
@@ -170,7 +156,6 @@ void resetGame()
 
 void draw()
 {
- 
   controllers.update();
   player1.input(keysPressed, keyCodes, controllers.getState(0));
   player2.input(keysPressed, keyCodes, controllers.getState(1));
@@ -295,5 +280,72 @@ void keyReleased()
   {
     keysPressed.remove(Character.toLowerCase(key));
     keyCodes.remove(keyCode); 
+  }
+}
+
+void beginContact(Contact contact)
+{
+  Fixture fixture1 = contact.getFixtureA();
+  Fixture fixture2 = contact.getFixtureB();
+
+  Object o1 = fixture1.getUserData();
+  Object o2 = fixture2.getUserData();
+
+  if(o1 instanceof Robot && o2 instanceof Cube)
+  {
+    Robot robot = (Robot) o1;
+    Cube cube = (Cube) o2;
+    
+    robot.contactCube(cube);
+  }
+  else if(o1 instanceof Robot && o2 instanceof Cube)
+  {
+    Robot robot = (Robot) o2;
+    Cube cube = (Cube) o1;
+
+    robot.contactCube(cube);
+  }
+
+  if(o1 instanceof BalanceCollision && o2 instanceof Cube)
+  {
+    BalanceCollision collision = (BalanceCollision) o1;
+    println(collision.isTop);
+    Cube cube = (Cube) o2;
+
+    Balance balance = collision.balance;
+    cube.counted = true;
+  }
+  else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
+  {
+    BalanceCollision collision = (BalanceCollision) o2;
+    println(collision.isTop);
+    Cube cube = (Cube) o1;
+
+    Balance balance = collision.balance;
+    cube.counted = true;
+  }
+}
+
+void endContact(Contact contact)
+{
+  Fixture fixture1 = contact.getFixtureA();
+  Fixture fixture2 = contact.getFixtureB();
+
+  Object o1 = fixture1.getUserData();
+  Object o2 = fixture2.getUserData();
+
+  if(o1 instanceof Robot && o2 instanceof Cube)
+  {
+    Robot robot = (Robot) o1;
+    Cube cube = (Cube) o2;
+    
+    robot.endContactCube(cube);
+  }
+  else if(o1 instanceof Robot && o2 instanceof Cube)
+  {
+    Robot robot = (Robot) o2;
+    Cube cube = (Cube) o1;
+
+    robot.endContactCube(cube);
   }
 }

@@ -92,4 +92,12 @@ class Cube
     filter.maskBits = MASK_CUBE_SCALE;
     body.getFixtureList().setFilterData(filter);
   }
+
+  void setCollisionToNormal()
+  {
+    Filter filter = new Filter();
+    filter.categoryBits = CATEGORY_CUBE_NORMAL;
+    filter.maskBits = MASK_CUBE_NORMAL;
+    body.getFixtureList().setFilterData(filter);
+  }
 }

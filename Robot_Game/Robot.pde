@@ -91,7 +91,7 @@ class Robot
 
   void checkIntake(ArrayList<Cube> cubes)
   {
-    if(this.contactCube != null)
+    if(this.contactCube != null && this.cube == null)
     {
       if(!this.contactCube.counted)
       {
@@ -153,6 +153,12 @@ class Robot
 
     fill(intakeColor);
     rect(0, w * 3.0 / 4, w / 2, w / 2);
+
+    if(this.cube != null)
+    {
+      fill(255, 255, 0);
+      rect(0, h / 2.5, width / 55, width / 55);
+    }
     
     popMatrix();
   }

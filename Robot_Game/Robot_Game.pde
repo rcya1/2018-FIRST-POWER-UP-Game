@@ -342,4 +342,23 @@ void endContact(Contact contact)
 
     robot.endContactCube(cube);
   }
+
+  if(o1 instanceof BalanceCollision && o2 instanceof Cube)
+  {
+    BalanceCollision collision = (BalanceCollision) o1;
+    Cube cube = (Cube) o2;
+    Balance balance = collision.balance;
+
+    cube.counted = false;
+    if(balance.isScale) cube.setCollisionToNormal();
+  }
+  else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
+  {
+    BalanceCollision collision = (BalanceCollision) o2;
+    Cube cube = (Cube) o1;
+    Balance balance = collision.balance;
+
+    cube.counted = false;
+    if(balance.isScale) cube.setCollisionToNormal();
+  }
 }

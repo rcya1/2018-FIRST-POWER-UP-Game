@@ -56,6 +56,9 @@ class Robot
     fixtureDef.friction = 0.3;
     fixtureDef.restitution = 0.5;
     
+    fixtureDef.filter.categoryBits = CATEGORY_ROBOT;
+    fixtureDef.filter.maskBits = MASK_ROBOT;
+    
     body.createFixture(fixtureDef);
 
     PolygonShape intakeShape = new PolygonShape();
@@ -90,14 +93,17 @@ class Robot
   {
     if(this.contactCube != null)
     {
-      this.cube = contactCube;
-      
-      cubes.remove(contactCube);
-      contactCube.removeFromWorld();
-      
-      this.contactCube = null;
-      intakeActive = false;
-      canIntake = false;
+      if(!this.contactCube.counted)
+      {
+        this.cube = contactCube;
+        
+        cubes.remove(contactCube);
+        contactCube.removeFromWorld();
+        
+        this.contactCube = null;
+        intakeActive = false;
+        canIntake = false;
+      }
     }
   }
 
@@ -106,7 +112,7 @@ class Robot
     PVector position = box2D.getBodyPixelCoordPVector(body);
     position.add(PVector.fromAngle((-body.getAngle() + PI / 2.0)).mult(h * 3 / 4.0));
 
-    this.cube.addToWorld(position);
+    this.cube.addToWorld(position, body.getAngle());
     cubes.add(this.cube);
 
     this.cube = null;

@@ -35,6 +35,10 @@ class Cube
     fixtureDef.density = 2.0;
     fixtureDef.friction = 1.0;
     fixtureDef.restitution = 0.5;
+
+    fixtureDef.filter.categoryBits = CATEGORY_CUBE_NORMAL;
+    fixtureDef.filter.maskBits = MASK_CUBE_NORMAL;
+
     fixtureDef.setUserData(this);
     
     body.createFixture(fixtureDef);
@@ -72,11 +76,20 @@ class Cube
     destroyed = true;
   }
 
-  void addToWorld(PVector position)
+  void addToWorld(PVector position, float angle)
   {
     bodyDef.position = box2D.coordPixelsToWorld(position);
+    bodyDef.angle = angle;
     body = box2D.createBody(bodyDef);
     body.createFixture(fixtureDef);
     destroyed = false;
+  }
+
+  void setCollisionToScale()
+  {
+    Filter filter = new Filter();
+    filter.categoryBits = CATEGORY_CUBE_SCALE;
+    filter.maskBits = MASK_CUBE_SCALE;
+    body.getFixtureList().setFilterData(filter);
   }
 }

@@ -53,17 +53,10 @@ int time, prevTime;
 
 ControllerManager controllers;
 
-final int SCALE = 0;
-final int LEFT_SWITCH = 1;
-final int RIGHT_SWITCH = 2;
-
-final int MATCH_LENGTH = 150;
-final int COUNTDOWN_LENGTH = 0;
-
 void setup()
 {
   size(1000, 600);
-  //fullScreen();
+  // fullScreen();
   frameRate(FPS);
   
   box2D = new Box2DProcessing(this);
@@ -238,8 +231,7 @@ void draw()
     countDownAlpha -= 5;
   }
   
-  //println(player2.position, player2.velocity, player2.acceleration);
-  //println(frameRate);
+  // println(frameRate);
 }
 
 void drawArea(Area area, color fillColor)
@@ -309,20 +301,22 @@ void beginContact(Contact contact)
   if(o1 instanceof BalanceCollision && o2 instanceof Cube)
   {
     BalanceCollision collision = (BalanceCollision) o1;
-    println(collision.isTop);
     Cube cube = (Cube) o2;
-
     Balance balance = collision.balance;
+
+    balance.incrementCount(collision.isTop);
     cube.counted = true;
+    if(balance.isScale) cube.setCollisionToScale();
   }
   else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
   {
     BalanceCollision collision = (BalanceCollision) o2;
-    println(collision.isTop);
     Cube cube = (Cube) o1;
-
     Balance balance = collision.balance;
+
+    balance.incrementCount(collision.isTop);
     cube.counted = true;
+    if(balance.isScale) cube.setCollisionToScale();
   }
 }
 

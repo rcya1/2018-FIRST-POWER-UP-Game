@@ -9,8 +9,9 @@ class Balance
   int topCount;
   int bottomCount;
   
-  float checkDistance;
   int prevTime;
+  
+  Body body;
   
   Balance(float x, float y, float w, float h, boolean isScale, boolean redTop, boolean left)
   {
@@ -25,8 +26,107 @@ class Balance
     this.topCount = 0;
     this.bottomCount = 0;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 1.125;
     this.prevTime = millis();
+    
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyType.STATIC;
+    bodyDef.position = box2D.coordPixelsToWorld(x, y);
+    
+    body = box2D.createBody(bodyDef);
+
+    PolygonShape middleShape = new PolygonShape();
+    float box2DWidth = box2D.scalarPixelsToWorld(w);
+    float box2DHeight = box2DHeight = box2D.scalarPixelsToWorld(h - w * 2); 
+    middleShape.setAsBox(box2DWidth / 2, box2DHeight / 2);
+    
+    createFixture(middleShape, false);
+
+    float scaleFenceWidth = isScale ? 0.0 : 4.0;
+    
+    PolygonShape topShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w);
+    box2DHeight = box2D.scalarPixelsToWorld(scaleFenceWidth);
+    Vec2 offset = box2D.vectorPixelsToWorld(0, -h / 2.0 + scaleFenceWidth / 2);
+
+    topShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(topShape, isScale);
+
+
+    PolygonShape bottomShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w);
+    box2DHeight = box2D.scalarPixelsToWorld(scaleFenceWidth);
+    offset = box2D.vectorPixelsToWorld(0, h / 2.0 - scaleFenceWidth / 2);
+
+    bottomShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(bottomShape, isScale);
+
+
+    PolygonShape leftShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
+    box2DHeight = box2D.scalarPixelsToWorld(h);
+    offset = box2D.vectorPixelsToWorld(-w / 2.0 + scaleFenceWidth / 2, 0);
+
+    leftShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(leftShape, isScale);
+
+
+    PolygonShape rightShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
+    box2DHeight = box2D.scalarPixelsToWorld(h);
+    offset = box2D.vectorPixelsToWorld(w / 2.0 - scaleFenceWidth / 2, 0);
+
+    rightShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(rightShape, isScale);
+
+
+    PolygonShape topShapeCheck = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    box2DHeight = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    offset = box2D.vectorPixelsToWorld(0, -h / 4.0);
+    topShapeCheck.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+
+    FixtureDef topShapeFixtureDef = new FixtureDef();
+    topShapeFixtureDef.shape = topShapeCheck;
+    topShapeFixtureDef.density = 0.3;
+    topShapeFixtureDef.friction = 0.3;
+    topShapeFixtureDef.restitution = 0.5;
+    topShapeFixtureDef.isSensor = true;
+    topShapeFixtureDef.setUserData(new BalanceCollision(true, this));
+
+    body.createFixture(topShapeFixtureDef);
+
+    PolygonShape bottomShapeCheck = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    box2DHeight = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
+    offset = box2D.vectorPixelsToWorld(0, h / 4.0);
+    bottomShapeCheck.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+
+    FixtureDef bottomShapeFixtureDef = new FixtureDef();
+    bottomShapeFixtureDef.shape = bottomShapeCheck;
+    bottomShapeFixtureDef.density = 0.3;
+    bottomShapeFixtureDef.friction = 0.3;
+    bottomShapeFixtureDef.restitution = 0.5;
+    bottomShapeFixtureDef.isSensor = true;
+    bottomShapeFixtureDef.setUserData(new BalanceCollision(false, this));
+
+    body.createFixture(bottomShapeFixtureDef);
+  }
+
+  void createFixture(PolygonShape shape, boolean isScaleBorder)
+  {
+    FixtureDef fixtureDef = new FixtureDef();
+    fixtureDef.shape = shape;
+    fixtureDef.density = 1.0;
+    fixtureDef.friction = 0.3;
+    fixtureDef.restitution = 0.5;
+
+    if(isScaleBorder)
+    {
+      fixtureDef.filter.categoryBits = CATEGORY_SCALE_BORDER;
+      fixtureDef.filter.maskBits = MASK_SCALE_BORDER;
+    }
+    
+    body.createFixture(fixtureDef);
   }
   
   void update(ArrayList<Cube> cubes)
@@ -38,30 +138,6 @@ class Balance
       {
         prevTime = time;
         if(isScale) timer--;
-        
-        Area top = getTopArea();
-        Area bottom = getBottomArea();
-        
-        for(Cube cube : cubes)
-        {
-          if(!cube.counted)
-          {
-            if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
-            {
-              Area cubeArea = cube.getArea();
-              if(intersects(top, cubeArea))
-              {
-                topCount++;
-                cube.counted = true;
-              }
-              else if(intersects(bottom, cubeArea))
-              {
-                bottomCount++;
-                cube.counted = true;
-              }
-            }
-          }
-        }
         
         if(topCount > bottomCount)
         {
@@ -124,9 +200,6 @@ class Balance
       else fill(0, 0, 255);
     }
     rect(position.x, position.y + h / 2 - w / 2, w, w);
-    
-    //fill(255, 0, 0, 50);
-    //ellipse(position.x, position.y, sqrt(checkDistance), sqrt(checkDistance));
   }
   
   void drawShadows()
@@ -156,32 +229,10 @@ class Balance
   //  }
   //  stroke(0);
   //}
-  
-  boolean intersects(Area area1, Area area2)
+
+  void incrementCount(boolean top)
   {
-    if(area1 == null || area2 == null) return false;
-    return area1.intersects(area2.getBounds()) && area2.intersects(area1.getBounds());
-  }
-  
-  Area getArea()
-  {
-    if(isScale)
-    {
-      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2 + w), (int) w, (int) (h - w * 2)));
-    }
-    else
-    {
-      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2), (int) w, (int) h));
-    }
-  }
-  
-  Area getTopArea()
-  {
-      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2), (int) w, (int) w));
-  }
-  
-  Area getBottomArea()
-  {
-      return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y + h / 2 - w), (int) w, (int) w));
+    if(top) topCount++;
+    else bottomCount++;
   }
 }

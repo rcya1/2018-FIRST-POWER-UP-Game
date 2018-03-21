@@ -1,20 +1,50 @@
 class Cube
 {
-  PVector position;
   float w, h;
   boolean counted;
   
-  float checkDistance;
+  BodyDef bodyDef;
+  Body body;
+  FixtureDef fixtureDef;  
+
+  Vec2 lastPosition;
+  boolean destroyed;
   
   Cube(float x, float y)
   {
-    position = new PVector(x, y);
     this.w = width / 55;
     this.h = width / 55;
     
     counted = false;
     
-    this.checkDistance = max(this.w, this.h) * max(this.w, this.h) * 2;
+    bodyDef = new BodyDef();
+    bodyDef.type = BodyType.DYNAMIC;
+    bodyDef.position = box2D.coordPixelsToWorld(x, y);
+    bodyDef.linearDamping = 1.5;
+    bodyDef.angularDamping = 1.5;
+    
+    body = box2D.createBody(bodyDef);
+    
+    PolygonShape shape = new PolygonShape();
+    float box2DWidth = box2D.scalarPixelsToWorld(w);
+    float box2DHeight = box2D.scalarPixelsToWorld(h);
+    shape.setAsBox(box2DWidth / 2, box2DHeight / 2);
+    
+    fixtureDef = new FixtureDef();
+    fixtureDef.shape = shape;
+    fixtureDef.density = 2.0;
+    fixtureDef.friction = 1.0;
+    fixtureDef.restitution = 0.5;
+
+    fixtureDef.filter.categoryBits = CATEGORY_CUBE_NORMAL;
+    fixtureDef.filter.maskBits = MASK_CUBE_NORMAL;
+
+    fixtureDef.setUserData(this);
+    
+    body.createFixture(fixtureDef);
+
+    lastPosition = new Vec2();
+    destroyed = false;
   }
   
   void update()
@@ -24,60 +54,50 @@ class Cube
   
   void draw()
   {
+    pushMatrix();
+    
     rectMode(CENTER);
     fill(255, 255, 0);
-    rect(position.x, position.y, w, h);
+    Vec2 loc = destroyed ? lastPosition : box2D.getBodyPixelCoord(body);
+    lastPosition = loc;
+    translate(loc.x, loc.y);
+    rotate(-body.getAngle());
+    rect(0, 0, w, h);
+    
+    popMatrix();
     
     //fill(255, 0, 0, 50);
     //ellipse(position.x, position.y, sqrt(checkDistance), sqrt(checkDistance));
   }
-  
-  Area getArea()
+
+  void removeFromWorld()
   {
-    return new Area(new Rectangle((int) (position.x - w / 2), (int) (position.y - h / 2), (int) w, (int) h));
+    if(body != null) box2D.destroyBody(body);
+    destroyed = true;
   }
-  
-  boolean intersects(Area other)
+
+  void addToWorld(PVector position, float angle)
   {
-    if(other == null) return false;
-    Area collisionBox = getArea();
-    return collisionBox.intersects(other.getBounds()) && other.intersects(collisionBox.getBounds());
+    bodyDef.position = box2D.coordPixelsToWorld(position);
+    bodyDef.angle = angle;
+    body = box2D.createBody(bodyDef);
+    body.createFixture(fixtureDef);
+    destroyed = false;
   }
-  
-  boolean intersects(Area area, ArrayList<Cube> cubes, Robot robot, ArrayList<Balance> balances)
+
+  void setCollisionToScale()
   {
-    if(intersects(area) || intersects(robot.collisionBox)) return true;
-    for(Cube cube : cubes)
-    {
-      if(!cube.counted)
-      {
-        if(PVector.sub(this.position, cube.position).magSq() <= this.checkDistance + cube.checkDistance)
-        {
-          if(intersects(cube.getArea())) return true;
-        }
-      }
-    }
-    
-    Balance checkBalance = null;
-    
-    if(position.x < width / 3)
-    {
-      checkBalance = balances.get(LEFT_SWITCH);
-    }
-    else if(position.x > width * 2.0 / 3)
-    {
-      checkBalance = balances.get(RIGHT_SWITCH);
-    }
-    else checkBalance = balances.get(SCALE);
-    
-    if(PVector.sub(this.position, checkBalance.position).magSq() <= this.checkDistance + checkBalance.checkDistance)
-    {
-      if(intersects(checkBalance.getArea()))
-      {
-        if(!intersects(checkBalance.getTopArea()) && !intersects(checkBalance.getBottomArea())) return true;
-      }
-    }
-    
-    return false;
+    Filter filter = new Filter();
+    filter.categoryBits = CATEGORY_CUBE_SCALE;
+    filter.maskBits = MASK_CUBE_SCALE;
+    body.getFixtureList().setFilterData(filter);
+  }
+
+  void setCollisionToNormal()
+  {
+    Filter filter = new Filter();
+    filter.categoryBits = CATEGORY_CUBE_NORMAL;
+    filter.maskBits = MASK_CUBE_NORMAL;
+    body.getFixtureList().setFilterData(filter);
   }
 }

@@ -5,3 +5,15 @@ application.linux64
 application.windows32
 application.windows64
 application.macosx
+.vs/ProjectSettings.json
+.vs/ProjectSettings.json
+.vs/VSWorkspaceState.json
+.vs/slnx.sqlite
+.vs/2018-FIRST-POWER-UP-Game/v15/.suo
+out/Robot_Game$Cube.class
+out/Robot_Game.class
+out/Robot_Game$Balance.class
+out/Robot_Game$Robot.class
+out/source/Robot_Game.java
+out/Robot_Game$Boundary.class
+out/Robot_Game$BalanceCollision.class

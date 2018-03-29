@@ -9,6 +9,7 @@ class Cube
 
   Vec2 lastPosition;
   boolean destroyed;
+  boolean raised;
   
   Cube(float x, float y)
   {

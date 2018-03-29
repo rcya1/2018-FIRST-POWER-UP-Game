@@ -11,12 +11,14 @@ class Robot
   
   boolean intakeActive;
   boolean canIntake;
+  double elevatorHeight;
   
   boolean strafeDrive;
   
   boolean wasd;
   
   Body body;
+  Fixture fixture;
   
   Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {
@@ -32,6 +34,7 @@ class Robot
     
     this.intakeActive = false;
     this.canIntake = true;
+    this.elevatorHeight = 0;
     
     this.strafeDrive = false;
     this.wasd = wasd;
@@ -59,7 +62,7 @@ class Robot
     fixtureDef.filter.categoryBits = CATEGORY_ROBOT;
     fixtureDef.filter.maskBits = MASK_ROBOT;
     
-    body.createFixture(fixtureDef);
+    fixture = body.createFixture(fixtureDef);
 
     PolygonShape intakeShape = new PolygonShape();
     box2DWidth = box2D.scalarPixelsToWorld(w / 2);
@@ -81,6 +84,19 @@ class Robot
   void update(ArrayList<Cube> cubes, ArrayList<Balance> balances)
   {
     updateCubes(cubes);
+
+    speed = (float) (9000.0 - elevatorHeight * 50);
+
+    if(elevatorHeight > 75)
+    {
+      setCollisionToScale();
+      if(this.cube != null) this.cube.raised = true;
+    }
+    else
+    {
+      setCollisionToNormal();
+      if(this.cube != null) this.cube.raised = false;
+    }
   }
 
   void updateCubes(ArrayList<Cube> cubes)
@@ -151,7 +167,8 @@ class Robot
     fill(robotColor);
     rect(0, 0, w, h);
 
-    fill(intakeColor);
+    fill(intakeColor, (float) (200 - elevatorHeight));
+
     rect(0, w * 3.0 / 4, w / 2, w / 2);
 
     if(this.cube != null)
@@ -174,6 +191,10 @@ class Robot
       
       intakeActive = controller.b;
       if(!controller.b) canIntake = true;
+
+      elevatorHeight += (controller.rightTrigger - controller.leftTrigger) * 10;
+      if(elevatorHeight < 0) elevatorHeight = 0;
+      if(elevatorHeight > 100) elevatorHeight = 100;
     }
     else
     {
@@ -184,6 +205,11 @@ class Robot
       
       intakeActive = (keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd);
       if(!((keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd))) canIntake = true;
+
+      if(!((keys.contains('q') && wasd) || ((keys.contains(';') || keys.contains(':')) && !wasd))) elevatorHeight -= 10;
+      if(!((keys.contains('e') && wasd) || ((keys.contains('\'') || keys.contains('"')) && !wasd))) elevatorHeight += 10;
+      if(elevatorHeight < 0) elevatorHeight = 0;
+      if(elevatorHeight > 100) elevatorHeight = 100;
     }
   }
   
@@ -281,5 +307,21 @@ class Robot
       PVector moveForce = PVector.fromAngle(radians(-controller.leftStickAngle)).mult(controller.leftStickMagnitude * controller.leftStickMagnitude).mult(speed / 4.0);
       applyForce(moveForce);
     }
+  }
+
+  void setCollisionToScale()
+  {
+    Filter filter = new Filter();
+    filter.categoryBits = CATEGORY_ROBOT_ELEVATOR;
+    filter.maskBits = MASK_ROBOT_ELEVATOR;
+    fixture.setFilterData(filter);
+  }
+
+  void setCollisionToNormal()
+  {
+    Filter filter = new Filter();
+    filter.categoryBits = CATEGORY_ROBOT;
+    filter.maskBits = MASK_ROBOT;
+    fixture.setFilterData(filter);
   }
 }

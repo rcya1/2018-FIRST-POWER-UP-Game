@@ -304,16 +304,25 @@ void beginContact(Contact contact)
     Cube cube = (Cube) o2;
     Balance balance = collision.balance;
 
-    if(balance.isScale && cube.raised)
+    if(balance.isScale)
     {
-      cube.setCollisionToScale();
-      balance.incrementCount(collision.isTop);
-      cube.counted = true;
+      if(cube.raised)
+      {
+        cube.setCollisionToScale();
+        balance.incrementCount(collision.isTop);
+        cube.counted = true;
+        cube.transparent = false;
+      }
+      else
+      {
+        cube.transparent = true;
+      }
     }
-    else if(!balance.isScale)
+    else
     {
       balance.incrementCount(collision.isTop);
       cube.counted = true;
+      cube.transparent = false;
     }
   }
   else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
@@ -322,16 +331,25 @@ void beginContact(Contact contact)
     Cube cube = (Cube) o1;
     Balance balance = collision.balance;
 
-    if(balance.isScale && cube.raised)
+    if(balance.isScale)
     {
-      cube.setCollisionToScale();
-      balance.incrementCount(collision.isTop);
-      cube.counted = true;
+      if(cube.raised)
+      {
+        cube.setCollisionToScale();
+        balance.incrementCount(collision.isTop);
+        cube.counted = true;
+        cube.transparent = false;
+      }
+      else
+      {
+        cube.transparent = true;
+      }
     }
-    else if(!balance.isScale)
+    else
     {
       balance.incrementCount(collision.isTop);
       cube.counted = true;
+      cube.transparent = false;
     }
   }
 }
@@ -359,22 +377,20 @@ void endContact(Contact contact)
     robot.endContactCube(cube);
   }
 
-  // if(o1 instanceof BalanceCollision && o2 instanceof Cube)
-  // {
-  //   BalanceCollision collision = (BalanceCollision) o1;
-  //   Cube cube = (Cube) o2;
-  //   Balance balance = collision.balance;
+  if(o1 instanceof BalanceCollision && o2 instanceof Cube)
+  {
+    BalanceCollision collision = (BalanceCollision) o1;
+    Cube cube = (Cube) o2;
+    Balance balance = collision.balance;
 
-  //   cube.counted = false;
-  //   if(balance.isScale) cube.setCollisionToNormal();
-  // }
-  // else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
-  // {
-  //   BalanceCollision collision = (BalanceCollision) o2;
-  //   Cube cube = (Cube) o1;
-  //   Balance balance = collision.balance;
+    if(balance.isScale) cube.transparent = false;
+  }
+  else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
+  {
+    BalanceCollision collision = (BalanceCollision) o2;
+    Cube cube = (Cube) o1;
+    Balance balance = collision.balance;
 
-  //   cube.counted = false;
-  //   if(balance.isScale) cube.setCollisionToNormal();
-  // }
+    if(balance.isScale) cube.transparent = false;
+  }
 }

@@ -12,6 +12,7 @@ class Robot
   boolean intakeActive;
   boolean canIntake;
   double elevatorHeight;
+  double elevatorElevatedHeight;
   
   boolean strafeDrive;
   
@@ -35,6 +36,7 @@ class Robot
     this.intakeActive = false;
     this.canIntake = true;
     this.elevatorHeight = 0;
+    this.elevatorElevatedHeight = 75;
     
     this.strafeDrive = false;
     this.wasd = wasd;
@@ -87,7 +89,7 @@ class Robot
 
     speed = (float) (9000.0 - elevatorHeight * 50);
 
-    if(elevatorHeight > 75)
+    if(elevatorHeight > elevatorElevatedHeight)
     {
       setCollisionToScale();
       if(this.cube != null) this.cube.raised = true;
@@ -173,7 +175,7 @@ class Robot
 
     if(this.cube != null)
     {
-      fill(255, 255, 0);
+      fill(255, 255, 0, (this.cube.raised ? 255 : 100));
       rect(0, h / 2.5, width / 55, width / 55);
     }
     

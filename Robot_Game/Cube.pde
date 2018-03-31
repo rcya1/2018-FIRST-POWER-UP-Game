@@ -10,6 +10,7 @@ class Cube
   Vec2 lastPosition;
   boolean destroyed;
   boolean raised;
+  boolean transparent;
   
   Cube(float x, float y)
   {
@@ -17,6 +18,7 @@ class Cube
     this.h = width / 55;
     
     counted = false;
+    transparent = false;
     
     bodyDef = new BodyDef();
     bodyDef.type = BodyType.DYNAMIC;
@@ -58,7 +60,7 @@ class Cube
     pushMatrix();
     
     rectMode(CENTER);
-    fill(255, 255, 0);
+    fill(255, 255, 0, (transparent ? 100 : 255));
     Vec2 loc = destroyed ? lastPosition : box2D.getBodyPixelCoord(body);
     lastPosition = loc;
     translate(loc.x, loc.y);

@@ -11,7 +11,12 @@ class Boundary
     this.h = h;
 
     counted = false;
-    
+
+    setupBox2D(x, y);
+  }
+
+  void setupBox2D(float x, float y)
+  {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyType.STATIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
@@ -34,7 +39,7 @@ class Boundary
   
   void update()
   {
-    
+
   }
   
   void draw()

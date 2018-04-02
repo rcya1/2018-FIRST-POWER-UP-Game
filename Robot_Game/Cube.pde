@@ -19,7 +19,15 @@ class Cube
     
     counted = false;
     transparent = false;
-    
+
+    lastPosition = new Vec2();
+    destroyed = false;
+
+    setupBox2D(x, y);
+  }
+
+  void setupBox2D(float x, float y)
+  {
     bodyDef = new BodyDef();
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
@@ -45,9 +53,6 @@ class Cube
     fixtureDef.setUserData(this);
     
     body.createFixture(fixtureDef);
-
-    lastPosition = new Vec2();
-    destroyed = false;
   }
   
   void update()

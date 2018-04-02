@@ -40,7 +40,12 @@ class Robot
     
     this.strafeDrive = false;
     this.wasd = wasd;
-    
+
+    setupBox2D(x, y, angle);
+  }
+
+  void setupBox2D(float x, float y, float angle)
+  {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);

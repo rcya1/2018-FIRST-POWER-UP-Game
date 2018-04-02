@@ -149,6 +149,13 @@ void resetGame()
 
 void draw()
 {
+  update();
+  drawSprites();
+  // println(frameRate);
+}
+
+void update()
+{
   controllers.update();
   player1.input(keysPressed, keyCodes, controllers.getState(0));
   player2.input(keysPressed, keyCodes, controllers.getState(1));
@@ -168,7 +175,10 @@ void draw()
   {
     balance.update(cubes);
   }
-  
+}
+
+void drawSprites()
+{
   rectMode(CENTER);
 
   fill(120);
@@ -230,8 +240,6 @@ void draw()
     text(countDownText, width / 2, height / 2);
     countDownAlpha -= 5;
   }
-  
-  // println(frameRate);
 }
 
 void drawArea(Area area, color fillColor)
@@ -272,125 +280,5 @@ void keyReleased()
   {
     keysPressed.remove(Character.toLowerCase(key));
     keyCodes.remove(keyCode); 
-  }
-}
-
-void beginContact(Contact contact)
-{
-  Fixture fixture1 = contact.getFixtureA();
-  Fixture fixture2 = contact.getFixtureB();
-
-  Object o1 = fixture1.getUserData();
-  Object o2 = fixture2.getUserData();
-
-  if(o1 instanceof Robot && o2 instanceof Cube)
-  {
-    Robot robot = (Robot) o1;
-    Cube cube = (Cube) o2;
-    
-    robot.contactCube(cube);
-  }
-  else if(o1 instanceof Robot && o2 instanceof Cube)
-  {
-    Robot robot = (Robot) o2;
-    Cube cube = (Cube) o1;
-
-    robot.contactCube(cube);
-  }
-
-  if(o1 instanceof BalanceCollision && o2 instanceof Cube)
-  {
-    BalanceCollision collision = (BalanceCollision) o1;
-    Cube cube = (Cube) o2;
-    Balance balance = collision.balance;
-
-    if(balance.isScale)
-    {
-      if(cube.raised)
-      {
-        cube.setCollisionToScale();
-        balance.incrementCount(collision.isTop);
-        cube.counted = true;
-        cube.transparent = false;
-      }
-      else
-      {
-        cube.transparent = true;
-      }
-    }
-    else
-    {
-      balance.incrementCount(collision.isTop);
-      cube.counted = true;
-      cube.transparent = false;
-    }
-  }
-  else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
-  {
-    BalanceCollision collision = (BalanceCollision) o2;
-    Cube cube = (Cube) o1;
-    Balance balance = collision.balance;
-
-    if(balance.isScale)
-    {
-      if(cube.raised)
-      {
-        cube.setCollisionToScale();
-        balance.incrementCount(collision.isTop);
-        cube.counted = true;
-        cube.transparent = false;
-      }
-      else
-      {
-        cube.transparent = true;
-      }
-    }
-    else
-    {
-      balance.incrementCount(collision.isTop);
-      cube.counted = true;
-      cube.transparent = false;
-    }
-  }
-}
-
-void endContact(Contact contact)
-{
-  Fixture fixture1 = contact.getFixtureA();
-  Fixture fixture2 = contact.getFixtureB();
-
-  Object o1 = fixture1.getUserData();
-  Object o2 = fixture2.getUserData();
-
-  if(o1 instanceof Robot && o2 instanceof Cube)
-  {
-    Robot robot = (Robot) o1;
-    Cube cube = (Cube) o2;
-    
-    robot.endContactCube(cube);
-  }
-  else if(o1 instanceof Robot && o2 instanceof Cube)
-  {
-    Robot robot = (Robot) o2;
-    Cube cube = (Cube) o1;
-
-    robot.endContactCube(cube);
-  }
-
-  if(o1 instanceof BalanceCollision && o2 instanceof Cube)
-  {
-    BalanceCollision collision = (BalanceCollision) o1;
-    Cube cube = (Cube) o2;
-    Balance balance = collision.balance;
-
-    if(balance.isScale) cube.transparent = false;
-  }
-  else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
-  {
-    BalanceCollision collision = (BalanceCollision) o2;
-    Cube cube = (Cube) o1;
-    Balance balance = collision.balance;
-
-    if(balance.isScale) cube.transparent = false;
   }
 }

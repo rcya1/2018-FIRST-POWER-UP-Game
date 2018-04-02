@@ -27,7 +27,12 @@ class Balance
     this.bottomCount = 0;
     
     this.prevTime = millis();
-    
+
+    setupBox2D(x, y);
+  }
+
+  void setupBox2D(float x, float y)
+  {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyType.STATIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);

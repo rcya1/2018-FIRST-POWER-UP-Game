@@ -75,6 +75,17 @@ void beginContact(Contact contact)
       cube.transparent = false;
     }
   }
+
+  if(o1 instanceof BalanceCollision && o2 instanceof Robot)
+  {
+    Robot robot = (Robot) o2;
+    robot.canRaise = false;
+  }
+  else if(o2 instanceof BalanceCollision && o1 instanceof Robot)
+  {
+    Robot robot = (Robot) o1;
+    robot.canRaise = false;
+  }
 }
 
 void endContact(Contact contact)
@@ -115,5 +126,16 @@ void endContact(Contact contact)
     Balance balance = collision.balance;
 
     if(balance.isScale) cube.transparent = false;
+  }
+
+  if(o1 instanceof BalanceCollision && o2 instanceof Robot)
+  {
+    Robot robot = (Robot) o2;
+    robot.canRaise = true;
+  }
+  else if(o2 instanceof BalanceCollision && o1 instanceof Robot)
+  {
+    Robot robot = (Robot) o1;
+    robot.canRaise = true;
   }
 }

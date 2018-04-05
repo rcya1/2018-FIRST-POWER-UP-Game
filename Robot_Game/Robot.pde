@@ -13,6 +13,7 @@ class Robot
   boolean canIntake;
   double elevatorHeight;
   double elevatorElevatedHeight;
+  boolean canRaise;
   
   boolean strafeDrive;
   
@@ -37,6 +38,7 @@ class Robot
     this.canIntake = true;
     this.elevatorHeight = 0;
     this.elevatorElevatedHeight = 75;
+    this.canRaise = true;
     
     this.strafeDrive = false;
     this.wasd = wasd;
@@ -104,6 +106,8 @@ class Robot
       setCollisionToNormal();
       if(this.cube != null) this.cube.raised = false;
     }
+
+    println(this.elevatorHeight);
   }
 
   void updateCubes(ArrayList<Cube> cubes)
@@ -114,18 +118,21 @@ class Robot
 
   void checkIntake(ArrayList<Cube> cubes)
   {
-    if(this.contactCube != null && this.cube == null)
+    if(elevatorHeight == 0)
     {
-      if(!this.contactCube.counted)
+      if(this.contactCube != null && this.cube == null)
       {
-        this.cube = contactCube;
-        
-        cubes.remove(contactCube);
-        contactCube.removeFromWorld();
-        
-        this.contactCube = null;
-        intakeActive = false;
-        canIntake = false;
+        if(!this.contactCube.counted)
+        {
+          this.cube = contactCube;
+          
+          cubes.remove(contactCube);
+          contactCube.removeFromWorld();
+          
+          this.contactCube = null;
+          intakeActive = false;
+          canIntake = false;
+        }
       }
     }
   }
@@ -199,9 +206,12 @@ class Robot
       intakeActive = controller.b;
       if(!controller.b) canIntake = true;
 
-      elevatorHeight += (controller.rightTrigger - controller.leftTrigger) * 10;
-      if(elevatorHeight < 0) elevatorHeight = 0;
-      if(elevatorHeight > 100) elevatorHeight = 100;
+      double tempElevatorHeight = elevatorHeight;
+      tempElevatorHeight += (controller.rightTrigger - controller.leftTrigger) * 10;
+      if(tempElevatorHeight < 0) tempElevatorHeight = 0;
+      if(tempElevatorHeight > 100) tempElevatorHeight = 100;
+      if(!canRaise && tempElevatorHeight > elevatorElevatedHeight) tempElevatorHeight = elevatorElevatedHeight;
+      elevatorHeight = tempElevatorHeight;
     }
     else
     {
@@ -213,10 +223,13 @@ class Robot
       intakeActive = (keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd);
       if(!((keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd))) canIntake = true;
 
-      if(!((keys.contains('q') && wasd) || ((keys.contains(';') || keys.contains(':')) && !wasd))) elevatorHeight -= 10;
-      if(!((keys.contains('e') && wasd) || ((keys.contains('\'') || keys.contains('"')) && !wasd))) elevatorHeight += 10;
-      if(elevatorHeight < 0) elevatorHeight = 0;
-      if(elevatorHeight > 100) elevatorHeight = 100;
+      double tempElevatorHeight = elevatorHeight;
+      if(!((keys.contains('q') && wasd) || ((keys.contains(';') || keys.contains(':')) && !wasd))) tempElevatorHeight -= 10;
+      if(!((keys.contains('e') && wasd) || ((keys.contains('\'') || keys.contains('"')) && !wasd))) tempElevatorHeight += 10;
+      if(tempElevatorHeight < 0) tempElevatorHeight = 0;
+      if(tempElevatorHeight > 100) tempElevatorHeight = 100;
+      if(!canRaise && tempElevatorHeight > elevatorElevatedHeight) tempElevatorHeight = elevatorElevatedHeight;
+      elevatorHeight = tempElevatorHeight;
     }
   }
   

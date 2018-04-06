@@ -79,12 +79,12 @@ void beginContact(Contact contact)
   if(o1 instanceof BalanceCollision && o2 instanceof Robot)
   {
     Robot robot = (Robot) o2;
-    robot.canRaise = false;
+    if(robot.elevatorHeight <= robot.elevatorElevatedHeight) robot.canRaise = false;
   }
   else if(o2 instanceof BalanceCollision && o1 instanceof Robot)
   {
     Robot robot = (Robot) o1;
-    robot.canRaise = false;
+    if(robot.elevatorHeight <= robot.elevatorElevatedHeight) robot.canRaise = false;
   }
 }
 

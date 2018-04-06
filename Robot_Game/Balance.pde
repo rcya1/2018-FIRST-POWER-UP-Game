@@ -87,7 +87,7 @@ class Balance
     PolygonShape topShapeCheck = new PolygonShape();
     box2DWidth = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
     box2DHeight = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
-    offset = box2D.vectorPixelsToWorld(0, -h / 4.0);
+    offset = box2D.vectorPixelsToWorld(0, -h / 2 + w / 2);
     topShapeCheck.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
 
     FixtureDef topShapeFixtureDef = new FixtureDef();
@@ -103,7 +103,7 @@ class Balance
     PolygonShape bottomShapeCheck = new PolygonShape();
     box2DWidth = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
     box2DHeight = box2D.scalarPixelsToWorld(w - scaleFenceWidth * 2);
-    offset = box2D.vectorPixelsToWorld(0, h / 4.0);
+    offset = box2D.vectorPixelsToWorld(0, h / 2 - w / 2);
     bottomShapeCheck.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
 
     FixtureDef bottomShapeFixtureDef = new FixtureDef();

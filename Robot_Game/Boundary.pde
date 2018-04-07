@@ -4,6 +4,10 @@ class Boundary
   boolean counted;
   
   Body body;
+
+  static final float FRICTION = 0.3;
+  static final float RESTITUTION = 0.2;
+  static final float DENSITY = 1.0;
   
   Boundary(float x, float y, float w, float h)
   {
@@ -30,9 +34,9 @@ class Boundary
     
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.density = 1.0;
-    fixtureDef.friction = 0.3;
-    fixtureDef.restitution = 0.5;
+    fixtureDef.density = DENSITY;
+    fixtureDef.friction = FRICTION;
+    fixtureDef.restitution = RESTITUTION;
     
     body.createFixture(fixtureDef);
   }

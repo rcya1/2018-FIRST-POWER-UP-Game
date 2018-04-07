@@ -12,6 +12,10 @@ class Balance
   int prevTime;
   
   Body body;
+
+  static final float DENSITY = 5.0;
+  static final float RESTITUTION = 0.01;
+  static final float FRICTION = 1.0;
   
   Balance(float x, float y, float w, float h, boolean isScale, boolean redTop, boolean left)
   {
@@ -92,9 +96,9 @@ class Balance
 
     FixtureDef topShapeFixtureDef = new FixtureDef();
     topShapeFixtureDef.shape = topShapeCheck;
-    topShapeFixtureDef.density = 0.3;
-    topShapeFixtureDef.friction = 0.3;
-    topShapeFixtureDef.restitution = 0.5;
+    topShapeFixtureDef.density = DENSITY;
+    topShapeFixtureDef.friction = FRICTION;
+    topShapeFixtureDef.restitution = RESTITUTION;
     topShapeFixtureDef.isSensor = true;
     topShapeFixtureDef.setUserData(new BalanceCollision(true, this));
 
@@ -108,9 +112,9 @@ class Balance
 
     FixtureDef bottomShapeFixtureDef = new FixtureDef();
     bottomShapeFixtureDef.shape = bottomShapeCheck;
-    bottomShapeFixtureDef.density = 0.3;
-    bottomShapeFixtureDef.friction = 0.3;
-    bottomShapeFixtureDef.restitution = 0.5;
+    bottomShapeFixtureDef.density = DENSITY;
+    bottomShapeFixtureDef.friction = FRICTION;
+    bottomShapeFixtureDef.restitution = RESTITUTION;
     bottomShapeFixtureDef.isSensor = true;
     bottomShapeFixtureDef.setUserData(new BalanceCollision(false, this));
 
@@ -121,9 +125,9 @@ class Balance
   {
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.density = 1.0;
-    fixtureDef.friction = 0.3;
-    fixtureDef.restitution = 0.5;
+    fixtureDef.density = DENSITY;
+    fixtureDef.friction = FRICTION;
+    fixtureDef.restitution = RESTITUTION;
 
     if(isScaleBorder)
     {

@@ -21,11 +21,18 @@ class Robot
   
   Body body;
   Fixture fixture;
+
+  static final float FRICTION = 0.7;
+  static final float RESTITUTION = 0.2;
+  static final float DENSITY = 1.0;
+
+  static final float MAX_SPEED = 20000;
+  static final float MAX_A_SPEED = 400;
   
   Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {
-    this.speed = 9000.0;
-    this.a_speed = 135.0;
+    this.speed = MAX_SPEED;
+    this.a_speed = MAX_A_SPEED;
     
     this.w = w;
     this.h = h;
@@ -52,7 +59,7 @@ class Robot
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
     bodyDef.angle = radians(angle);
-    bodyDef.linearDamping = 3.0;
+    bodyDef.linearDamping = 2.5;
     bodyDef.angularDamping = 2.5;
     
     body = box2D.createBody(bodyDef);
@@ -64,9 +71,9 @@ class Robot
     
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.density = 0.3;
-    fixtureDef.friction = 0.3;
-    fixtureDef.restitution = 0.5;
+    fixtureDef.density = DENSITY;
+    fixtureDef.friction = FRICTION;
+    fixtureDef.restitution = RESTITUTION;
     
     fixtureDef.filter.categoryBits = CATEGORY_ROBOT;
     fixtureDef.filter.maskBits = MASK_ROBOT;
@@ -81,9 +88,9 @@ class Robot
 
     FixtureDef intakeFixtureDef = new FixtureDef();
     intakeFixtureDef.shape = intakeShape;
-    intakeFixtureDef.density = 0.3;
-    intakeFixtureDef.friction = 0.3;
-    intakeFixtureDef.restitution = 0.5;
+    intakeFixtureDef.density = DENSITY;
+    intakeFixtureDef.friction = FRICTION;
+    intakeFixtureDef.restitution = RESTITUTION;
     intakeFixtureDef.isSensor = true;
     intakeFixtureDef.setUserData(this);
 
@@ -94,7 +101,8 @@ class Robot
   {
     updateCubes(cubes);
 
-    speed = (float) (9000.0 - elevatorHeight * 50);
+    speed = (float) (MAX_SPEED - (elevatorHeight * (MAX_SPEED / 200)));
+    a_speed = (float) (MAX_A_SPEED - (elevatorHeight * (MAX_A_SPEED / 200)));
 
     if(elevatorHeight > elevatorElevatedHeight)
     {
@@ -106,8 +114,6 @@ class Robot
       setCollisionToNormal();
       if(this.cube != null) this.cube.raised = false;
     }
-
-    println(this.elevatorHeight);
   }
 
   void updateCubes(ArrayList<Cube> cubes)

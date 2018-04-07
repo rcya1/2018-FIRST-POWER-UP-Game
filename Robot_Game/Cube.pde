@@ -11,6 +11,10 @@ class Cube
   boolean destroyed;
   boolean raised;
   boolean transparent;
+
+  static final float FRICTION = 1.0;
+  static final float RESTITUTION = 0.4;
+  static final float DENSITY = 2.0;
   
   Cube(float x, float y)
   {
@@ -31,7 +35,7 @@ class Cube
     bodyDef = new BodyDef();
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
-    bodyDef.linearDamping = 1.5;
+    bodyDef.linearDamping = 3.0;
     bodyDef.angularDamping = 1.5;
     
     body = box2D.createBody(bodyDef);
@@ -43,9 +47,9 @@ class Cube
     
     fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.density = 2.0;
-    fixtureDef.friction = 1.0;
-    fixtureDef.restitution = 0.5;
+    fixtureDef.density = DENSITY;
+    fixtureDef.friction = FRICTION;
+    fixtureDef.restitution = RESTITUTION;
 
     fixtureDef.filter.categoryBits = CATEGORY_CUBE_NORMAL;
     fixtureDef.filter.maskBits = MASK_CUBE_NORMAL;

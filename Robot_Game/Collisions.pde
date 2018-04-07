@@ -118,8 +118,11 @@ void endContact(Contact contact)
     Balance balance = collision.balance;
 
     if(balance.isScale) cube.transparent = false;
-    cube.counted = false;
-    balance.decrementCount(collision.isTop);
+    else
+    {
+      cube.counted = false;
+      balance.decrementCount(collision.isTop);
+    }
   }
   else if(o2 instanceof BalanceCollision && o1 instanceof Cube)
   {
@@ -128,8 +131,11 @@ void endContact(Contact contact)
     Balance balance = collision.balance;
 
     if(balance.isScale) cube.transparent = false;
-    cube.counted = false;
-    balance.decrementCount(collision.isTop);
+    else
+    {
+      cube.counted = false;
+      balance.decrementCount(collision.isTop);
+    }
   }
 
   if(o1 instanceof BalanceCollision && o2 instanceof Robot)

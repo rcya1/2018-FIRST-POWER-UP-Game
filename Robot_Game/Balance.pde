@@ -240,4 +240,10 @@ class Balance
     if(top) topCount++;
     else bottomCount++;
   }
+
+  void decrementCount(boolean top)
+  {
+    if(top) topCount--;
+    else topCount++;
+  }
 }

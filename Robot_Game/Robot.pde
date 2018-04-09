@@ -26,8 +26,8 @@ class Robot
   static final float RESTITUTION = 0.2;
   static final float DENSITY = 1.0;
 
-  static final float MAX_SPEED = 20000;
-  static final float MAX_A_SPEED = 400;
+  static final float MAX_SPEED = 25000;
+  static final float MAX_A_SPEED = 500;
   
   Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {

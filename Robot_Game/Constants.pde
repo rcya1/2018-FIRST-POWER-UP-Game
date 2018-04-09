@@ -3,7 +3,7 @@ final int LEFT_SWITCH = 1;
 final int RIGHT_SWITCH = 2;
 
 final int MATCH_LENGTH = 150;
-final int COUNTDOWN_LENGTH = 0;
+final int COUNTDOWN_LENGTH = 5;
 
 final short CATEGORY_ROBOT = 0x0001;
 final short CATEGORY_CUBE_NORMAL = 0x002;

@@ -2,7 +2,7 @@ final int SCALE = 0;
 final int LEFT_SWITCH = 1;
 final int RIGHT_SWITCH = 2;
 
-final int MATCH_LENGTH = 150;
+final int MATCH_LENGTH = 120;
 final int COUNTDOWN_LENGTH = 5;
 
 final short CATEGORY_ROBOT = 0x0001;

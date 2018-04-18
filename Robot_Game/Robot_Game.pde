@@ -264,10 +264,9 @@ void drawSprites()
   stroke(0);
   fill(0, 0, 215);
 
-  float bluePlatX = width / 2 + width / 50 + width / 30s - platformSlopeWidth / 2;
+  float bluePlatX = width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2;
 
-  rect(bluePlatX, height / 2,
-    platY, platformHeight);
+  rect(bluePlatX, height / 2, platY, platformHeight);
 
   fill(0, 0, 195);
   beginShape();

@@ -60,7 +60,7 @@ class Robot
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
     bodyDef.angle = radians(angle);
     bodyDef.linearDamping = 2.5;
-    bodyDef.angularDamping = 2.5;
+    bodyDef.angularDamping = 3.0;
     
     body = box2D.createBody(bodyDef);
     
@@ -189,7 +189,7 @@ class Robot
 
     fill(intakeColor, (float) (200 - elevatorHeight));
 
-    rect(0, w * 3.0 / 4, w / 2, w / 2);
+    rect(0, h / 2 - w / 4, w / 2, w / 2);
 
     if(this.cube != null)
     {

@@ -42,6 +42,7 @@ Area fenceHorizontal;
 Area fenceVertical;
 
 int fenceWidth;
+int markingThickness;
 
 ArrayList<Balance> balances;
 
@@ -81,9 +82,9 @@ void resetGame()
   if(player1 != null) player1.removeFromWorld();
   if(player2 != null) player2.removeFromWorld();
 
-  player1 = new Robot(width / 10, height / 2, width / 20, height / 6, 90, color(255, 175, 175), 
+  player1 = new Robot(width / 10, height / 2, width / 20, height / 7, 90, color(255, 175, 175), 
     color(255, 150, 150), true);
-  player2 = new Robot(width - width / 10, height / 2, width / 20, height / 6, 270, 
+  player2 = new Robot(width - width / 10, height / 2, width / 20, height / 7, 270, 
     color(175, 175, 255), color(150, 150, 255), false);
   
   for(Cube cube : cubes) cube.removeFromWorld();
@@ -145,6 +146,8 @@ void resetGame()
   new Boundary(0, height / 2, fenceWidth * 2, height);
   new Boundary(width, height / 2, fenceWidth * 2, height);
 
+  markingThickness = width / 100;
+
   score = new int[] {0, 0};
   countDown = COUNTDOWN_LENGTH;
   countDownAlpha = 255;
@@ -168,7 +171,6 @@ void update()
   player2.input(keysPressed, keyCodes, controllers.getState(1));
   
   box2D.step();
-  background(255);
   
   player1.update(cubes, balances);
   player2.update(cubes, balances);
@@ -186,8 +188,123 @@ void update()
 
 void drawSprites()
 {
+  background(135, 136, 136);
   rectMode(CENTER);
 
+  float step = height * 1.65 / 55;
+  
+  float leftX = width / 4 - width / 30 - width / 110;
+  float rightX = width * 3.0 / 4 + width / 30 + width / 110;
+
+  fill(255);
+  noStroke();
+  //Draw auto lines
+  rect(leftX - step, height / 2, markingThickness, height - fenceWidth * 2);
+  rect(rightX + step, height / 2, markingThickness, height - fenceWidth * 2);
+
+  //Draw null zone lines
+  rect(width / 2 - width / 18 + markingThickness / 2, height * 7 / 8.0 - fenceWidth / 2 + markingThickness / 2, 
+    markingThickness, height / 4 - fenceWidth - markingThickness + 2);
+  rect(width / 2 + width / 18 - markingThickness / 2, height * 7 / 8.0 - fenceWidth / 2 + markingThickness / 2, 
+    markingThickness, height / 4 - fenceWidth - markingThickness + 2);
+  rect(width / 2, height * 3 / 4.0 + markingThickness / 2, width / 9, markingThickness);
+
+  rect(width / 2 - width / 18 + markingThickness / 2, height * 1 / 8.0 + fenceWidth / 2 - markingThickness / 2, 
+    markingThickness, height / 4 - fenceWidth - markingThickness + 2);
+  rect(width / 2 + width / 18 - markingThickness / 2, height * 1 / 8.0 + fenceWidth / 2 - markingThickness / 2, 
+    markingThickness, height / 4 - fenceWidth - markingThickness + 2);
+  rect(width / 2, height * 1 / 4.0 - markingThickness / 2, width / 9, markingThickness);
+
+  //Draw the middle wire carry
+  fill(0);
+  rect(width / 2, height / 2, markingThickness, height - fenceWidth * 2);
+
+  int platformSlopeWidth = 10;
+
+  //Draw red centerline and platform
+  fill(255, 0, 0);
+  rect((width / 4 - width / 25 + fenceWidth) / 2, height / 2, width / 4 - width / 25 - fenceWidth / 2, markingThickness);
+
+  stroke(0);
+  rect(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2, height / 2,
+    width / 15 - platformSlopeWidth, height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2);
+  fill(195, 0, 0);
+  beginShape();
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+  endShape(CLOSE);
+  beginShape();
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+  endShape(CLOSE);
+  beginShape();
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+  endShape(CLOSE);
+  noStroke();
+
+  //Draw blue centerline and platform
+  fill(0, 0, 255);
+  rect((width * 3.0 / 4 + width * 24.0 / 25 + fenceWidth) / 2, height / 2, 
+    width / 4 - width / 25 + fenceWidth / 2, markingThickness);
+
+  stroke(0);
+  rect(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2, height / 2,
+    width / 15 - platformSlopeWidth, height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2);
+  fill(0, 0, 195);
+  beginShape();
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+  endShape(CLOSE);
+  beginShape();
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+  endShape(CLOSE);
+  beginShape();
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
+        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+  endShape(CLOSE);
+  noStroke();
+
+  stroke(0);
+
+  //Draw the borders
   fill(120);
   rect(width / 2, fenceWidth / 2, width, fenceWidth);
   rect(width / 2, height - fenceWidth / 2, width, fenceWidth);
@@ -218,7 +335,7 @@ void drawSprites()
   
   textSize(height / 15);
   
-  fill(0);
+  fill(255);
   textSize(width / 25);
   textAlign(CENTER);
   text(score[0], width / 3, height / 10);
@@ -238,21 +355,14 @@ void drawSprites()
   }
   if(countDownAlpha > 0)
   {
-    pushMatrix();
     String countDownText = countDown == 0 ? "POWER UP!" : Integer.toString(countDown);
     
     textSize(width / 10);
     textAlign(CENTER, CENTER);
 
     fill(255, countDownAlpha);
-    rectMode(CENTER);
-    noStroke();
-    rect(width / 2, height / 2, textWidth(countDownText), width / 10);
-
-    fill(0, countDownAlpha);
     text(countDownText, width / 2, height / 2 - 10);
     countDownAlpha -= 5;
-    popMatrix();
   }
 }
 

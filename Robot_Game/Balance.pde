@@ -44,7 +44,7 @@ class Balance
     body = box2D.createBody(bodyDef);
 
     PolygonShape middleShape = new PolygonShape();
-    float box2DWidth = box2D.scalarPixelsToWorld(w);
+    float box2DWidth = box2D.scalarPixelsToWorld(isScale ? w / 2 : w);
     float box2DHeight = box2DHeight = box2D.scalarPixelsToWorld(h - w * 2); 
     middleShape.setAsBox(box2DWidth / 2, box2DHeight / 2);
     
@@ -183,7 +183,7 @@ class Balance
     rectMode(CENTER);
     
     fill(100);
-    rect(position.x, position.y, w, h - w * 2);
+    rect(position.x, position.y, isScale ? w / 2 : w, h - w * 2);
     
     //Set appropriate colors. Draw switch slightly lighter
     if(redTop)
@@ -214,7 +214,7 @@ class Balance
   void drawShadows()
   {
     noStroke();
-    fill(200);
+    fill(100, 100);
     rect(position.x + 2, position.y - h / 2 + w / 2 - 2, w + 3, w + 2);
     rect(position.x + 2, position.y + h / 2 - w / 2 - 2, w + 3, w + 2);
     //drawCenterGradient(position.x, position.y - h / 2 + w / 2, w + 4, w + 4, color(0), color(200));

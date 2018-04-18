@@ -226,6 +226,7 @@ void drawSprites()
   rect((width / 4 - width / 25 + fenceWidth) / 2, height / 2, width / 4 - width / 25 - fenceWidth / 2, markingThickness);
 
   stroke(0);
+  fill(215, 0, 0);
   rect(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2, height / 2,
     width / 15 - platformSlopeWidth, height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2);
   fill(195, 0, 0);
@@ -267,6 +268,7 @@ void drawSprites()
     width / 4 - width / 25 + fenceWidth / 2, markingThickness);
 
   stroke(0);
+  fill(0, 0, 215);
   rect(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2, height / 2,
     width / 15 - platformSlopeWidth, height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2);
   fill(0, 0, 195);

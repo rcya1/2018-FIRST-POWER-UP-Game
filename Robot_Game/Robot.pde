@@ -26,8 +26,8 @@ class Robot
   static final float RESTITUTION = 0.2;
   static final float DENSITY = 1.0;
 
-  static final float MAX_SPEED = 20000;
-  static final float MAX_A_SPEED = 400;
+  static final float MAX_SPEED = 25000;
+  static final float MAX_A_SPEED = 500;
   
   Robot(float x, float y, float w, float h, float angle, color robotColor, color intakeColor, boolean wasd)
   {
@@ -221,7 +221,7 @@ class Robot
     }
     else
     {
-      strafeDrive = (keyCodes.contains(SHIFT) && wasd) || ((keys.contains('/') || keys.contains('?')) && !wasd);
+      strafeDrive = (keyCodes.contains(SHIFT) && wasd) || ((keys.contains(',') || keys.contains('<')) && !wasd);
       
       if(!strafeDrive) normalControl(keys, keyCodes);
       else strafeControl(keys, keyCodes, false);
@@ -230,8 +230,8 @@ class Robot
       if(!((keys.contains(' ') && wasd) || ((keys.contains('.') || keys.contains('>')) && !wasd))) canIntake = true;
 
       double tempElevatorHeight = elevatorHeight;
-      if(!((keys.contains('q') && wasd) || ((keys.contains(';') || keys.contains(':')) && !wasd))) tempElevatorHeight -= 10;
-      if(!((keys.contains('e') && wasd) || ((keys.contains('\'') || keys.contains('"')) && !wasd))) tempElevatorHeight += 10;
+      if(!((keys.contains('q') && wasd) || (keys.contains('o') && !wasd))) tempElevatorHeight -= 10;
+      if(!((keys.contains('e') && wasd) || ((keys.contains('[') || keys.contains('{')) && !wasd))) tempElevatorHeight += 10;
       if(tempElevatorHeight < 0) tempElevatorHeight = 0;
       if(tempElevatorHeight > 100) tempElevatorHeight = 100;
       if(!canRaise && tempElevatorHeight > elevatorElevatedHeight) tempElevatorHeight = elevatorElevatedHeight;
@@ -241,14 +241,14 @@ class Robot
   
   void normalControl(HashSet<Character> keys, HashSet<Integer> keyCodes)
   {
-    if((keys.contains('d') && wasd) || (keyCodes.contains(RIGHT) && !wasd)) applyAngularForce(a_speed);
-    if((keys.contains('a') && wasd) || (keyCodes.contains(LEFT) && !wasd)) applyAngularForce(-a_speed);
-    if((keys.contains('w') && wasd) || (keyCodes.contains(UP) && !wasd))
+    if((keys.contains('d') && wasd) || ((keys.contains('\'') || keys.contains('"')) && !wasd)) applyAngularForce(a_speed);
+    if((keys.contains('a') && wasd) || (keys.contains('l') && !wasd)) applyAngularForce(-a_speed);
+    if((keys.contains('w') && wasd) || (keys.contains('p') && !wasd))
     {
       PVector moveForce = PVector.fromAngle(-body.getAngle() + PI / 2.0).mult(speed);
       applyForce(moveForce);
     }
-    if((keys.contains('s') && wasd) || (keyCodes.contains(DOWN) && !wasd))
+    if((keys.contains('s') && wasd) || ((keys.contains(';') || keys.contains(':')) && !wasd))
     {
       PVector moveForce = PVector.fromAngle(-body.getAngle() + PI / 2.0 + PI).mult(speed);
       applyForce(moveForce);
@@ -258,22 +258,22 @@ class Robot
   void strafeControl(HashSet<Character> keys, HashSet<Integer> keyCodes, boolean firstPerson)
   {
     float referenceAngle = firstPerson ? -body.getAngle() + PI / 2.0 : -PI / 2.0;
-    if((keys.contains('d') && wasd) || (keyCodes.contains(RIGHT) && !wasd))
+    if((keys.contains('d') && wasd) || ((keys.contains('\'') || keys.contains('"')) && !wasd))
     {
       PVector moveForce = PVector.fromAngle(referenceAngle + PI / 2.0).mult(speed / 4.0);
       applyForce(moveForce);
     }
-    if((keys.contains('a') && wasd) || (keyCodes.contains(LEFT) && !wasd))
+    if((keys.contains('a') && wasd) || (keys.contains('l') && !wasd))
     {
       PVector moveForce = PVector.fromAngle(referenceAngle - PI / 2.0).mult(speed / 4.0);
       applyForce(moveForce);
     }
-    if((keys.contains('w') && wasd) || (keyCodes.contains(UP) && !wasd))
+    if((keys.contains('w') && wasd) || (keys.contains('p') && !wasd))
     {
       PVector moveForce = PVector.fromAngle(referenceAngle).mult(speed / 4.0);
       applyForce(moveForce);
     }
-    if((keys.contains('s') && wasd) || (keyCodes.contains(DOWN) && !wasd))
+    if((keys.contains('s') && wasd) || ((keys.contains(';') || keys.contains(':')) && !wasd))
     {
       PVector moveForce = PVector.fromAngle(referenceAngle + PI).mult(speed / 4.0);
       applyForce(moveForce);

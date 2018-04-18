@@ -250,4 +250,9 @@ class Balance
     if(top) topCount--;
     else topCount++;
   }
+
+  void removeFromWorld()
+  {
+    if(body != null) box2D.destroyBody(body);
+  }
 }

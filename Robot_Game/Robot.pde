@@ -350,4 +350,9 @@ class Robot
     filter.maskBits = MASK_ROBOT;
     fixture.setFilterData(filter);
   }
+
+  void removeFromWorld()
+  {
+    if(body != null) box2D.destroyBody(body);
+  }
 }

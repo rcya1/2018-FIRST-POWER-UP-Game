@@ -78,9 +78,15 @@ void setup()
 
 void resetGame()
 {
-  player1 = new Robot(width / 10, height / 2, width / 20, height / 6, 90, color(200), color(150), true);
-  player2 = new Robot(width - width / 10, height / 2, width / 20, height / 6, 270, color(200), color(150), false);
+  if(player1 != null) player1.removeFromWorld();
+  if(player2 != null) player2.removeFromWorld();
+
+  player1 = new Robot(width / 10, height / 2, width / 20, height / 6, 90, color(255, 175, 175), 
+    color(255, 150, 150), true);
+  player2 = new Robot(width - width / 10, height / 2, width / 20, height / 6, 270, 
+    color(175, 175, 255), color(150, 150, 255), false);
   
+  for(Cube cube : cubes) cube.removeFromWorld();
   cubes.clear();
   
   float initY = height / 3 + width / 110;
@@ -125,6 +131,7 @@ void resetGame()
   cubes.add(new Cube(rightX + step * 2, initY));
   
   
+  for(Balance balance : balances) balance.removeFromWorld();
   balances.clear();
   
   balances = new ArrayList<Balance>();
@@ -231,14 +238,21 @@ void drawSprites()
   }
   if(countDownAlpha > 0)
   {
-    fill(255, countDownAlpha);
+    pushMatrix();
+    String countDownText = countDown == 0 ? "POWER UP!" : Integer.toString(countDown);
+    
     textSize(width / 10);
-    textAlign(CENTER);
-    
-    String countDownText = countDown == 0 ? "GO" : Integer.toString(countDown);
-    
-    text(countDownText, width / 2, height / 2);
+    textAlign(CENTER, CENTER);
+
+    fill(255, countDownAlpha);
+    rectMode(CENTER);
+    noStroke();
+    rect(width / 2, height / 2, textWidth(countDownText), width / 10);
+
+    fill(0, countDownAlpha);
+    text(countDownText, width / 2, height / 2 - 10);
     countDownAlpha -= 5;
+    popMatrix();
   }
 }
 
@@ -276,9 +290,6 @@ void keyPressed()
 
 void keyReleased()
 {
-  if(countDown == 0)
-  {
-    keysPressed.remove(Character.toLowerCase(key));
-    keyCodes.remove(keyCode); 
-  }
+  keysPressed.remove(Character.toLowerCase(key));
+  keyCodes.remove(keyCode); 
 }

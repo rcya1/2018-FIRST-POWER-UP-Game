@@ -220,44 +220,39 @@ void drawSprites()
   rect(width / 2, height / 2, markingThickness, height - fenceWidth * 2);
 
   int platformSlopeWidth = 10;
+  float platY = width / 15 - platformSlopeWidth;
 
   //Draw red centerline and platform
   fill(255, 0, 0);
-  rect((width / 4 - width / 25 + fenceWidth) / 2, height / 2, width / 4 - width / 25 - fenceWidth / 2, markingThickness);
+  rect((width / 4 - width / 25 + fenceWidth) / 2, height / 2, 
+    width / 4 - width / 25 - fenceWidth / 2, markingThickness);
 
   stroke(0);
-  rect(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2, height / 2,
-    width / 15 - platformSlopeWidth, height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2);
+  fill(215, 0, 0);
+
+  float redPlatX = width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2;
+  float platformHeight = height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2;
+
+  rect(redPlatX, height / 2, platY, platformHeight);
+
   fill(195, 0, 0);
   beginShape();
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(redPlatX + (platY) / 2, height / 2 - (platformHeight) / 2);
+    vertex(redPlatX + (platY) / 2, height / 2 - (platformHeight) / 2 - platformSlopeWidth);
+    vertex(redPlatX - (platY) / 2 - platformSlopeWidth, height / 2 - (platformHeight) / 2 - platformSlopeWidth);
+    vertex(redPlatX - (platY) / 2, height / 2 - (platformHeight) / 2);
   endShape(CLOSE);
   beginShape();
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(redPlatX + (platY) / 2, height / 2 + (platformHeight) / 2);
+    vertex(redPlatX + (platY) / 2, height / 2 + (platformHeight) / 2 + platformSlopeWidth);
+    vertex(redPlatX - (platY) / 2 - platformSlopeWidth, height / 2 + (platformHeight) / 2 + platformSlopeWidth);
+    vertex(redPlatX - (platY) / 2, height / 2 + (platformHeight) / 2);
   endShape(CLOSE);
   beginShape();
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 - width / 50 - width / 30 + platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2 - platformSlopeWidth, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+    vertex(redPlatX - (platY) / 2 - platformSlopeWidth, height / 2 + (platformHeight) / 2 + platformSlopeWidth);
+    vertex(redPlatX - (platY) / 2, height / 2 + (platformHeight) / 2);
+    vertex(redPlatX - (platY) / 2, height / 2 - (platformHeight) / 2);
+    vertex(redPlatX - (platY) / 2 - platformSlopeWidth, height / 2 - (platformHeight) / 2 - platformSlopeWidth);
   endShape(CLOSE);
   noStroke();
 
@@ -267,38 +262,31 @@ void drawSprites()
     width / 4 - width / 25 + fenceWidth / 2, markingThickness);
 
   stroke(0);
-  rect(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2, height / 2,
-    width / 15 - platformSlopeWidth, height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2);
+  fill(0, 0, 215);
+
+  float bluePlatX = width / 2 + width / 50 + width / 30s - platformSlopeWidth / 2;
+
+  rect(bluePlatX, height / 2,
+    platY, platformHeight);
+
   fill(0, 0, 195);
   beginShape();
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(bluePlatX - (platY) / 2, height / 2 - (platformHeight) / 2);
+    vertex(bluePlatX - (platY) / 2, height / 2 - (platformHeight) / 2 - platformSlopeWidth);
+    vertex(bluePlatX + (platY) / 2 + platformSlopeWidth, height / 2 - (platformHeight) / 2 - platformSlopeWidth);
+    vertex(bluePlatX + (platY) / 2, height / 2 - (platformHeight) / 2);
   endShape(CLOSE);
   beginShape();
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 - (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
+    vertex(bluePlatX - (platY) / 2, height / 2 + (platformHeight) / 2);
+    vertex(bluePlatX - (platY) / 2, height / 2 + (platformHeight) / 2 + platformSlopeWidth);
+    vertex(bluePlatX + (platY) / 2 + platformSlopeWidth, height / 2 + (platformHeight) / 2 + platformSlopeWidth);
+    vertex(bluePlatX + (platY) / 2, height / 2 + (platformHeight) / 2);
   endShape(CLOSE);
   beginShape();
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 + platformSlopeWidth);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 + (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2);
-    vertex(width / 2 + width / 50 + width / 30 - platformSlopeWidth / 2 + (width / 15 - platformSlopeWidth) / 2 + platformSlopeWidth, 
-        height / 2 - (height / 2 - width / 12.5 * 2 - platformSlopeWidth * 2) / 2 - platformSlopeWidth);
+    vertex(bluePlatX + (platY) / 2 + platformSlopeWidth, height / 2 + (platformHeight) / 2 + platformSlopeWidth);
+    vertex(bluePlatX + (platY) / 2, height / 2 + (platformHeight) / 2);
+    vertex(bluePlatX + (platY) / 2, height / 2 - (platformHeight) / 2);
+    vertex(bluePlatX + (platY) / 2 + platformSlopeWidth, height / 2 - (platformHeight) / 2 - platformSlopeWidth);
   endShape(CLOSE);
   noStroke();
 

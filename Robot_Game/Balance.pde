@@ -70,22 +70,38 @@ class Balance
     createFixture(bottomShape, isScale);
 
 
-    PolygonShape leftShape = new PolygonShape();
+    PolygonShape leftTopShape = new PolygonShape();
     box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
-    box2DHeight = box2D.scalarPixelsToWorld(h);
-    offset = box2D.vectorPixelsToWorld(-w / 2.0 + scaleFenceWidth / 2, 0);
+    box2DHeight = box2D.scalarPixelsToWorld(w);
+    offset = box2D.vectorPixelsToWorld(-w / 2.0 + scaleFenceWidth / 2, -h / 2 + w / 2);
 
-    leftShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
-    createFixture(leftShape, isScale);
+    leftTopShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(leftTopShape, isScale);
 
-
-    PolygonShape rightShape = new PolygonShape();
+    PolygonShape leftBottomShape = new PolygonShape();
     box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
-    box2DHeight = box2D.scalarPixelsToWorld(h);
-    offset = box2D.vectorPixelsToWorld(w / 2.0 - scaleFenceWidth / 2, 0);
+    box2DHeight = box2D.scalarPixelsToWorld(w);
+    offset = box2D.vectorPixelsToWorld(-w / 2.0 + scaleFenceWidth / 2, h / 2 - w / 2);
 
-    rightShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
-    createFixture(rightShape, isScale);
+    leftBottomShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(leftBottomShape, isScale);
+
+
+    PolygonShape rightTopShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
+    box2DHeight = box2D.scalarPixelsToWorld(w);
+    offset = box2D.vectorPixelsToWorld(w / 2.0 - scaleFenceWidth / 2, -h / 2 + w / 2);
+
+    rightTopShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(rightTopShape, isScale);
+
+    PolygonShape rightBottomShape = new PolygonShape();
+    box2DWidth = box2D.scalarPixelsToWorld(scaleFenceWidth);
+    box2DHeight = box2D.scalarPixelsToWorld(w);
+    offset = box2D.vectorPixelsToWorld(w / 2.0 - scaleFenceWidth / 2, h / 2 - w / 2);
+
+    rightBottomShape.setAsBox(box2DWidth / 2, box2DHeight / 2, offset, 0);
+    createFixture(rightBottomShape, isScale);
 
 
     PolygonShape topShapeCheck = new PolygonShape();

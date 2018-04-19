@@ -5,7 +5,6 @@ import org.jbox2d.dynamics.*;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
 
-import java.util.Random;
 import com.studiohartman.jamepad.*;
 import com.studiohartman.jamepad.tester.*;
 import com.badlogic.gdx.jnigen.*;
@@ -21,12 +20,9 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.*;
 
-import java.util.Iterator;
-import java.awt.geom.PathIterator;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
+import java.awt.geom.*;
 import java.awt.Rectangle;
-import java.util.HashSet;
+import java.util.*;
 
 Box2DProcessing box2D;
 
@@ -163,6 +159,7 @@ void resetGame()
 void draw()
 {
   update();
+  drawMarkings();
   drawSprites();
   // println(frameRate);
 }
@@ -170,8 +167,8 @@ void draw()
 void update()
 {
   controllers.update();
-  player1.input(keysPressed, keyCodes, controllers.getState(0));
-  player2.input(keysPressed, keyCodes, controllers.getState(1));
+  player1.input(keysPressed, keyCodes, controllers.getState(1));
+  player2.input(keysPressed, keyCodes, controllers.getState(0));
   
   box2D.step();
   
@@ -189,7 +186,7 @@ void update()
   }
 }
 
-void drawSprites()
+void drawMarkings()
 {
   background(135, 136, 136);
   rectMode(CENTER);
@@ -320,11 +317,14 @@ void drawSprites()
   
   fill(0, 0, 255);
   rect(width - fenceWidth / 2, height / 2, fenceWidth, height - fenceWidth * 2);
-  
+}
+
+void drawSprites()
+{ 
   stroke(0);
   
   //Draw shadows on the scale
-  balances.get(0).drawShadows();
+  balances.get(SCALE).drawShadows();
   
   player1.draw();
   player2.draw();

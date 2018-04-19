@@ -230,7 +230,7 @@ class Balance
   void drawShadows()
   {
     noStroke();
-    fill(100, 100);
+    fill(0, 150);
     rect(position.x + 2, position.y - h / 2 + w / 2 - 2, w + 3, w + 2);
     rect(position.x + 2, position.y + h / 2 - w / 2 - 2, w + 3, w + 2);
     //drawCenterGradient(position.x, position.y - h / 2 + w / 2, w + 4, w + 4, color(0), color(200));

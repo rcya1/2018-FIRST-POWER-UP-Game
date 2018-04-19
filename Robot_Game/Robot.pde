@@ -13,6 +13,7 @@ class Robot
   boolean canIntake;
   double elevatorHeight;
   double elevatorElevatedHeight;
+  double elevatorSpeed;
   boolean canRaise;
   
   boolean strafeDrive;
@@ -44,6 +45,7 @@ class Robot
     this.intakeActive = false;
     this.canIntake = true;
     this.elevatorHeight = 0;
+    this.elevatorSpeed = 5;
     this.elevatorElevatedHeight = 75;
     this.canRaise = true;
     
@@ -193,9 +195,9 @@ class Robot
 
     if(this.cube != null)
     {
-      fill(255, 255, 0, (this.cube.raised ? 255 : 100));
+      tint(255, (this.cube.raised ? 255 : 100));
       image(imageCube, 0, h / 2.5, width / 55, width / 55);
-      rect(0, h / 2.5, width / 55, width / 55);
+      tint(255);
     }
     
     popMatrix();

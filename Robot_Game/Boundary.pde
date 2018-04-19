@@ -6,8 +6,8 @@ class Boundary
   Body body;
 
   static final float FRICTION = 0.3;
-  static final float RESTITUTION = 0.2;
-  static final float DENSITY = 1.0;
+  static final float RESTITUTION = 0.1257;
+  static final float DENSITY = 1.257;
   
   Boundary(float x, float y, float w, float h)
   {

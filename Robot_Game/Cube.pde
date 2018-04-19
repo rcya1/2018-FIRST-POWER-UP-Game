@@ -68,13 +68,14 @@ class Cube
   {
     pushMatrix();
     
-    rectMode(CENTER);
+    imageMode(CENTER);
     fill(255, 255, 0, (transparent ? 100 : 255));
     Vec2 loc = destroyed ? lastPosition : box2D.getBodyPixelCoord(body);
     lastPosition = loc;
     translate(loc.x, loc.y);
     rotate(-body.getAngle());
-    rect(0, 0, w, h);
+    // rect(0, 0, w, h);
+    image(imageCube, 0, 0, w, h);
     
     popMatrix();
     

@@ -53,6 +53,7 @@ int countDownAlpha;
 int time, prevTime;
 
 ControllerManager controllers;
+PImage imageCube;
 
 void setup()
 {
@@ -73,6 +74,8 @@ void setup()
   
   cubes = new ArrayList<Cube>();
   balances = new ArrayList<Balance>();
+
+  imageCube = loadImage("data/Cube.png");
   
   resetGame();
 }
@@ -219,13 +222,29 @@ void drawSprites()
   fill(0);
   rect(width / 2, height / 2, markingThickness, height - fenceWidth * 2);
 
+
+  //Draw red box around cubes
+  fill(255, 0, 0);
+  rectMode(CENTER);
+  rect(width / 4 - width / 30 - step * 1.5, height / 2 - step * 1.5, step * 3, markingThickness);
+  rect(width / 4 - width / 30 - step * 1.5, height / 2 + step * 1.5, step * 3, markingThickness);
+  rect(width / 4 - width / 30 - step * 3, height / 2, markingThickness, step * 3 + markingThickness);
+
+  //Draw blue box around cubes
+  fill(0, 0, 255);
+  rectMode(CENTER);
+  rect(width * 3.0 / 4 + width / 30 + step * 1.5, height / 2 - step * 1.5, step * 3, markingThickness);
+  rect(width * 3.0 / 4 + width / 30 + step * 1.5, height / 2 + step * 1.5, step * 3, markingThickness);
+  rect(width * 3.0 / 4 + width / 30 + step * 3, height / 2, markingThickness, step * 3 + markingThickness);
+
+
   int platformSlopeWidth = 10;
   float platY = width / 15 - platformSlopeWidth;
 
   //Draw red centerline and platform
   fill(255, 0, 0);
   rect((width / 4 - width / 25 + fenceWidth) / 2, height / 2, 
-    width / 4 - width / 25 - fenceWidth / 2, markingThickness);
+    width / 4 - width / 25 - fenceWidth / 2 + 2, markingThickness);
 
   stroke(0);
   fill(215, 0, 0);

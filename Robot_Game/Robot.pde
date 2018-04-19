@@ -194,6 +194,7 @@ class Robot
     if(this.cube != null)
     {
       fill(255, 255, 0, (this.cube.raised ? 255 : 100));
+      image(imageCube, 0, h / 2.5, width / 55, width / 55);
       rect(0, h / 2.5, width / 55, width / 55);
     }
     

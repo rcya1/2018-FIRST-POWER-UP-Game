@@ -36,7 +36,7 @@ class Cube
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = box2D.coordPixelsToWorld(x, y);
     bodyDef.linearDamping = 3.0;
-    bodyDef.angularDamping = 1.5;
+    bodyDef.angularDamping = 2.0;
     
     body = box2D.createBody(bodyDef);
     

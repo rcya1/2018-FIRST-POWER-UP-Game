@@ -14,7 +14,7 @@ class Balance
   Body body;
 
   static final float DENSITY = 5.0;
-  static final float RESTITUTION = 0.01;
+  static final float RESTITUTION = 0.01257;
   static final float FRICTION = 1.0;
   
   Balance(float x, float y, float w, float h, boolean isScale, boolean redTop, boolean left)
